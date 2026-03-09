@@ -1,0 +1,27 @@
+{
+  "validUser": {
+    "username": "standard_user",
+    "password": "secret_sauce",
+    "expectedTitle": "Dashboard"
+  },
+  "invalidUser": {
+    "username": "invalid_user",
+    "password": "wrong_password",
+    "expectedError": "Invalid credentials"
+  },
+  "lockedUser": {
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "expectedError": "Your account has been locked"
+  },
+  "emptyCredentials": {
+    "username": "",
+    "password": "",
+    "expectedError": "Username is required"
+  },
+  "emptyPassword": {
+    "username": "standard_user",
+    "password": "",
+    "expectedError": "Password is required"
+  }
+}
