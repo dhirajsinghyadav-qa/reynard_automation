@@ -111,6 +111,29 @@ jobs:
         run: npm run test:ci
         continue-on-error: true
 
+      # ================================
+      # DEBUG STEP
+      # ================================
+      - name: 'Debug - Check Generated Folders'
+        if: always()
+        run: |
+          echo "Current directory:"
+          pwd
+
+          echo "Listing all files and folders:"
+          ls -R
+
+      # ================================
+      # ENSURE ARTIFACT FOLDERS
+      # ================================
+      - name: 'Ensure Artifact Folders Exist'
+        if: always()
+        run: |
+          mkdir -p test-results
+          mkdir -p playwright-report
+          mkdir -p allure-results
+          mkdir -p logs
+
       # ----------------------------------------------------------------------
       # GENERATE ALLURE REPORT
       # ----------------------------------------------------------------------
