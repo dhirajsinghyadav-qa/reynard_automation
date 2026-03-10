@@ -49,11 +49,7 @@ test.afterEach(async ({ page }, testInfo) => {
     }
   }
 
-  Logger.info(
-    testInfo.title,
-    `Test Duration: ${testInfo.duration} ms`,
-  );
-
+  Logger.info(testInfo.title, `Test Duration: ${testInfo.duration} ms`);
 });
 
 export { expect };

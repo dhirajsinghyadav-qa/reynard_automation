@@ -56,7 +56,6 @@ export class Logger {
 }
  */
 
-
 import fs from 'fs';
 //import path from 'path';
 
@@ -85,7 +84,6 @@ export class Logger {
   }
 
   private static addLog(level: string, testName: string, message: string) {
-
     const formatted = `[${level}] ${new Date().toISOString()} - ${message}`;
 
     // console.log(`[${testName}] ${formatted}`);
@@ -98,7 +96,6 @@ export class Logger {
   }
 
   static flushAll() {
-
     this.ensureLogFolder();
 
     const sortedTests = Array.from(this.testLogs.keys()).sort((a, b) => {
@@ -110,7 +107,6 @@ export class Logger {
     let finalOutput = '';
 
     for (const testName of sortedTests) {
-
       const logs = this.testLogs.get(testName);
       if (!logs) continue;
 

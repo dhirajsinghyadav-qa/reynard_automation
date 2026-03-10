@@ -5,7 +5,6 @@ import { LoginPage } from '../pages/LoginPage';
 import { Logger } from '../utils/logger';
 import { ENV } from '../config/env';
 
-
 test.describe('Login Valid Scenarios Suite', () => {
   // 🔥 Test Start Log
   test.beforeEach(async ({ page: _page }, testInfo) => {
