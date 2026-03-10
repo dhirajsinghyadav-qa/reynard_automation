@@ -4,6 +4,10 @@ import fs from 'fs';
 
 export const test = base.extend({});
 
+test.beforeEach(async ({ page: _page }, testInfo) => {
+  Logger.info(testInfo.title, '===== TEST STARTED =====');
+});
+
 test.afterEach(async ({ page }, testInfo) => {
   const cleanError = testInfo.error?.message?.split('\n')[0] || 'No Error Message';
 
@@ -25,7 +29,7 @@ test.afterEach(async ({ page }, testInfo) => {
     Logger.error(testInfo.title, `Failure Reason: ${cleanError}`);
 
     // 📸 Attach Screenshot to Allure
-    const screenshotPath = `test-results/${testInfo.title}-failure.png`;
+    const screenshotPath = testInfo.outputPath('failure.png');
 
     await page.screenshot({ path: screenshotPath, fullPage: true });
 
@@ -35,13 +39,21 @@ test.afterEach(async ({ page }, testInfo) => {
     });
 
     // 📊 Attach Trace
-    if (fs.existsSync(testInfo.outputPath('trace.zip'))) {
+    const tracePath = testInfo.outputPath('trace.zip');
+
+    if (fs.existsSync(tracePath)) {
       await testInfo.attach('Trace File', {
-        path: testInfo.outputPath('trace.zip'),
+        path: tracePath,
         contentType: 'application/zip',
       });
     }
   }
+
+  Logger.info(
+    testInfo.title,
+    `Test Duration: ${testInfo.duration} ms`,
+  );
+
 });
 
 export { expect };

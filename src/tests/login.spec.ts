@@ -5,6 +5,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { Logger } from '../utils/logger';
 import { ENV } from '../config/env';
 
+
 test.describe('Login Valid Scenarios Suite', () => {
   // 🔥 Test Start Log
   test.beforeEach(async ({ page: _page }, testInfo) => {
@@ -31,5 +32,16 @@ test.describe('Login Valid Scenarios Suite', () => {
     await page.goto(ENV.BASE_URL_QA);
     await loginPage.verifyLoginPageLoaded();
     await expect(page).toHaveURL(/sign-in/);
+  });
+
+  test('2. Verify Forgot Password link clickable', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await expect(loginPage.getForgotPasswordLink()).toBeVisible();
+    await expect(loginPage.getForgotPasswordLink()).toBeEnabled();
+
+    await loginPage.clickForgotPassword();
   });
 });
