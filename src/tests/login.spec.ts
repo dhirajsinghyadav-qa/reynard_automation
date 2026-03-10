@@ -43,4 +43,15 @@ test.describe('Login Valid Scenarios Suite', () => {
 
     await loginPage.clickForgotPassword();
   });
+
+  test('3. Verify Login button is clickable', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await expect(loginPage.getLoginButton()).toBeVisible();
+    await expect(loginPage.getLoginButton()).toBeEnabled();
+
+    await loginPage.clickLoginButton();
+  });
 });
