@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Import ENV after environment variables are set by workflow
+import { ENV } from './src/config/env';
 
 /**
  * Read environment variables from file.
@@ -9,8 +10,6 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-import { ENV } from './src/config/env';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -38,7 +37,7 @@ export default defineConfig({
     // baseURL: 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    baseURL: ENV.BASE_URL,
+    baseURL: ENV.BASE_URL_QA,
     headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
