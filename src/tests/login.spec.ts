@@ -65,4 +65,15 @@ test.describe('Login Valid Scenarios Suite', () => {
 
     await loginPage.clickRememberMe();
   });
+
+  test('5. Verify user can enter email', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.enterEmail(ENV.ADMIN_EMAIL);
+
+    // Assertion
+    await expect(loginPage.getEmailInput()).toHaveValue(ENV.ADMIN_EMAIL);
+  });
 });
