@@ -87,4 +87,18 @@ test.describe('Login Valid Scenarios Suite', () => {
     // Assertion
     await expect(loginPage.getPasswordInput()).toHaveValue(ENV.ADMIN_PASSWORD);
   });
+
+  test('7. Verify admin can login with valid credentials and is redirected to Settings page', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.loginAndValidate(ENV.ADMIN_EMAIL, ENV.ADMIN_PASSWORD);
+
+    // Verify user is redirected to Settings page after successful login
+    await loginPage.verifyRedirectToSettings();
+    await expect(page).toHaveURL(/setting/);
+  });
 });
