@@ -54,4 +54,15 @@ test.describe('Login Valid Scenarios Suite', () => {
 
     await loginPage.clickLoginButton();
   });
+
+  test('4. Verify Remember Me  checkbox is clickable', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await expect(loginPage.getRememberCheckbox()).toBeVisible();
+    await expect(loginPage.getRememberCheckbox()).toBeEnabled();
+
+    await loginPage.clickRememberMe();
+  });
 });
