@@ -1,10 +1,9 @@
 import { test, expect } from '@fixtures/pageObjectsFixture';
-import { DataFactory } from '../utils/dataGenerator';
+// import { DataFactory } from '../utils/dataGenerator';
 import { LoginPage } from '../pages/LoginPage';
 // import { Helpers } from '../utils/helpers';
 import { Logger } from '../utils/logger';
 import { ENV } from '../config/env';
-
 
 test.describe('Login Valid Scenarios Suite', () => {
   // 🔥 Test Start Log

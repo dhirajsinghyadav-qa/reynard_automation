@@ -40,7 +40,6 @@ export class LoginPage {
     this.passwordValidationMessage = page.getByText('Password must contain'); */
   }
 
-
   // ---------------- GETTERS ----------------
   getEmailInput() {
     return this.emailInput;

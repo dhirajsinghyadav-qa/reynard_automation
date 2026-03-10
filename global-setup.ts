@@ -32,7 +32,6 @@ async function globalSetup(config: FullConfig): Promise<void> {
 export default globalSetup;
  */
 
-
 import fs from 'fs';
 import path from 'path';
 

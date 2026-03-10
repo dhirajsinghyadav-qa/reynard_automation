@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test as base, TestInfo } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
-import { DashboardPage } from '../pages/Settins';
+// import { DashboardPage } from '../pages/Settins';
 import { Logger } from '../utils/logger';
 
 /**
@@ -19,7 +19,7 @@ import { Logger } from '../utils/logger';
 
 type PageObjectsFixtures = {
   loginPage: LoginPage;
-  dashboardPage: DashboardPage;
+  // dashboardPage: DashboardPage;
   logger: typeof Logger;
 };
 
@@ -32,10 +32,10 @@ export const test = base.extend<PageObjectsFixtures>({
   },
 
   // Provide DashboardPage instance
-  dashboardPage: async ({ page }, use: (value: DashboardPage) => Promise<void>) => {
+  /* dashboardPage: async ({ page }, use: (value: DashboardPage) => Promise<void>) => {
     const dashboardPage = new DashboardPage(page);
     await use(dashboardPage);
-  },
+  }, */
 
   // Provide Logger utility
   // eslint-disable-next-line no-empty-pattern

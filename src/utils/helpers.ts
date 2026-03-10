@@ -16,7 +16,7 @@ export async function waitAndClick(page: Page, locator: Locator, timeout = 10000
 
 
  * Clear a field and type text
- 
+
 export async function clearAndFill(locator: Locator, text: string): Promise<void> {
   await locator.clear();
   await locator.fill(text);
@@ -24,7 +24,7 @@ export async function clearAndFill(locator: Locator, text: string): Promise<void
 
 
  * Wait for page URL to contain a string
- 
+
 export async function waitForUrl(page: Page, urlPart: string, timeout = 15000): Promise<void> {
   logger.debug(`Waiting for URL to contain: ${urlPart}`);
   await page.waitForURL(`**${urlPart}**`, { timeout });
@@ -44,14 +44,14 @@ export async function takeScreenshot(page: Page, name: string): Promise<Buffer> 
 
 
  * Wait for network idle (no pending requests)
- 
+
 export async function waitForNetworkIdle(page: Page, timeout = 10000): Promise<void> {
   await page.waitForLoadState('networkidle', { timeout });
 }
 
 
  * Retry a function N times before failing
- 
+
 export async function retry<T>(
   fn: () => Promise<T>,
   retries = 3,
@@ -71,21 +71,21 @@ export async function retry<T>(
 
 
  * Format date to readable string
- 
+
 export function formatDate(date: Date = new Date()): string {
   return date.toISOString().replace(/[:.]/g, '-').slice(0, 19);
 }
 
 
  * Sleep for given milliseconds
- 
+
 export async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 
  * Assert element text contains expected value
- 
+
 export async function assertTextContains(locator: Locator, expected: string): Promise<void> {
   await expect(locator).toContainText(expected);
   logger.debug(`✅ Text assertion passed: "${expected}"`);
@@ -93,19 +93,18 @@ export async function assertTextContains(locator: Locator, expected: string): Pr
 
 
  * Scroll to element
- 
+
 export async function scrollToElement(locator: Locator): Promise<void> {
   await locator.scrollIntoViewIfNeeded();
 }
 
 
  * Get text of all matching elements
- 
+
 export async function getAllTexts(locator: Locator): Promise<string[]> {
   return await locator.allTextContents();
 }
  */
-
 
 import { Page, expect } from '@playwright/test';
 import path from 'path';

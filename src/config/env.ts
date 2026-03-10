@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 
 // Determine environment
-const environment = process.env.TEST_ENV || 'qa'; // Default to 'qa' if not set 
+const environment = process.env.TEST_ENV || 'qa'; // Default to 'qa' if not set
 const envFilePath = path.resolve(`env/${environment}.env`);
 
 // Load environment variables from file
