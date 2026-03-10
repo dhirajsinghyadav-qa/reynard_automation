@@ -76,4 +76,15 @@ test.describe('Login Valid Scenarios Suite', () => {
     // Assertion
     await expect(loginPage.getEmailInput()).toHaveValue(ENV.ADMIN_EMAIL);
   });
+
+  test('6. Verify user can enter password', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.enterPassword(ENV.ADMIN_PASSWORD);
+
+    // Assertion
+    await expect(loginPage.getPasswordInput()).toHaveValue(ENV.ADMIN_PASSWORD);
+  });
 });
