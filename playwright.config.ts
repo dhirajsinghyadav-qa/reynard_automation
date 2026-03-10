@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
 // Import ENV after environment variables are set by workflow
-const { ENV } = require('./src/config/env');
 
 /**
  * Read environment variables from file.
@@ -10,6 +9,8 @@ const { ENV } = require('./src/config/env');
 import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+import { ENV } from './src/config/env';
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -52,7 +53,7 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    /* 
+    /*
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },

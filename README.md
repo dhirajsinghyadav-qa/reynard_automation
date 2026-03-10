@@ -14,20 +14,20 @@ This framework is structured to support **maintainable automation, cross-browser
 
 # Table of Contents
 
-* Project Overview
-* Framework Structure
-* Prerequisites
-* Installation
-* Environment Setup
-* Running Tests
-* Test Data & Utilities
-* Reporting
-* Linting & Formatting
-* CI/CD Pipeline
-* Best Practices
-* Notes
-* Author
-* License
+- Project Overview
+- Framework Structure
+- Prerequisites
+- Installation
+- Environment Setup
+- Running Tests
+- Test Data & Utilities
+- Reporting
+- Linting & Formatting
+- CI/CD Pipeline
+- Best Practices
+- Notes
+- Author
+- License
 
 ---
 
@@ -39,16 +39,16 @@ The goal is to maintain **clean test design, reusable utilities, centralized con
 
 ### Key Features
 
-* **Page Object Model (POM)** for maintainable test structure
-* **Centralized DataFactory** for generating valid and invalid test data
-* **Custom Helper utilities** for common actions
-* **Structured logging system** for test execution
-* **Environment-based configuration using `.env`**
-* **Cross-browser testing** (Chromium, Firefox, WebKit)
-* **Allure reporting integration**
-* **Jenkins CI/CD pipeline support**
-* **Linting and formatting with ESLint + Prettier**
-* **Failure artifacts (screenshots, videos, traces)**
+- **Page Object Model (POM)** for maintainable test structure
+- **Centralized DataFactory** for generating valid and invalid test data
+- **Custom Helper utilities** for common actions
+- **Structured logging system** for test execution
+- **Environment-based configuration using `.env`**
+- **Cross-browser testing** (Chromium, Firefox, WebKit)
+- **Allure reporting integration**
+- **Jenkins CI/CD pipeline support**
+- **Linting and formatting with ESLint + Prettier**
+- **Failure artifacts (screenshots, videos, traces)**
 
 ---
 
@@ -102,12 +102,12 @@ The goal is to maintain **clean test design, reusable utilities, centralized con
 
 Before running the framework ensure the following tools are installed:
 
-* **Node.js >= 18**
-* **npm >= 9**
-* **Playwright browsers**
-* **nvm (optional)** for Node version management
-* **Jenkins** (optional for CI/CD)
-* **Allure Commandline**
+- **Node.js >= 18**
+- **npm >= 9**
+- **Playwright browsers**
+- **nvm (optional)** for Node version management
+- **Jenkins** (optional for CI/CD)
+- **Allure Commandline**
 
 Install Allure CLI globally:
 
@@ -212,12 +212,12 @@ npm run test:debug
 
 `DataFactory` provides reusable test data generators:
 
-* Valid admin and user credentials
-* Invalid login scenarios
-* Empty input tests
-* Injection test values
-* Random email and password generation
-* Bulk test users
+- Valid admin and user credentials
+- Invalid login scenarios
+- Empty input tests
+- Injection test values
+- Random email and password generation
+- Bulk test users
 
 Example:
 
@@ -231,13 +231,13 @@ const user = DataFactory.randomUser();
 
 Helper utilities provide reusable browser actions:
 
-* clickElement
-* typeText
-* waitForElement
-* random data generators
-* file upload helper
-* retry logic
-* timestamp utilities
+- clickElement
+- typeText
+- waitForElement
+- random data generators
+- file upload helper
+- retry logic
+- timestamp utilities
 
 ---
 
@@ -245,9 +245,9 @@ Helper utilities provide reusable browser actions:
 
 Structured logging is provided via a custom logger:
 
-* INFO
-* WARN
-* ERROR
+- INFO
+- WARN
+- ERROR
 
 Logs are written to the **logs/** folder during execution.
 
@@ -287,9 +287,9 @@ npm run report
 
 Failure artifacts are captured automatically:
 
-* Screenshot → `only-on-failure`
-* Video → `retain-on-failure`
-* Trace → `retain-on-failure`
+- Screenshot → `only-on-failure`
+- Video → `retain-on-failure`
+- Trace → `retain-on-failure`
 
 ---
 
@@ -327,11 +327,11 @@ This framework includes **Jenkins pipeline automation** using `Jenkinsfile`.
 
 Supported pipeline parameters:
 
-* ENV
-* BROWSER
-* TAG
-* HEADLESS
-* WORKERS
+- ENV
+- BROWSER
+- TAG
+- HEADLESS
+- WORKERS
 
 ### Pipeline Workflow
 
@@ -346,11 +346,11 @@ Supported pipeline parameters:
 
 Artifacts stored by pipeline:
 
-* Test logs
-* Screenshots
-* Videos
-* Allure results
-* JUnit reports
+- Test logs
+- Screenshots
+- Videos
+- Allure results
+- JUnit reports
 
 ---
 
@@ -358,24 +358,24 @@ Artifacts stored by pipeline:
 
 Follow these guidelines when extending the framework:
 
-* Use **Page Object Model** for all UI interactions
-* Reuse **DataFactory** for test data
-* Avoid hardcoded values in tests
-* Use **Logger instead of console.log**
-* Apply retry logic for flaky interactions
-* Always commit **linted and formatted code**
-* Store sensitive credentials in `.env` or CI secrets
-* Keep tests **independent and atomic**
+- Use **Page Object Model** for all UI interactions
+- Reuse **DataFactory** for test data
+- Avoid hardcoded values in tests
+- Use **Logger instead of console.log**
+- Apply retry logic for flaky interactions
+- Always commit **linted and formatted code**
+- Store sensitive credentials in `.env` or CI secrets
+- Keep tests **independent and atomic**
 
 ---
 
 # Notes
 
-* Framework supports **cross-browser testing** (Chromium, Firefox, WebKit).
-* Environment configuration is centralized via `.env`.
-* Global setup automatically creates the **logs/** directory.
-* Additional modules can be added under `pages/` and `tests/`.
-* The framework is designed to be easily extendable for **large automation suites**.
+- Framework supports **cross-browser testing** (Chromium, Firefox, WebKit).
+- Environment configuration is centralized via `.env`.
+- Global setup automatically creates the **logs/** directory.
+- Additional modules can be added under `pages/` and `tests/`.
+- The framework is designed to be easily extendable for **large automation suites**.
 
 ---
 
