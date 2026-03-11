@@ -296,6 +296,26 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
 
     await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
+
+  test('18. Verify password validation when password has no numeric character', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('passwordWithoutNumber');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Password without number',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
 
 /*
