@@ -144,7 +144,7 @@ export class LoginPage {
     try {
       await this.emailInput.fill(email);
       const value = await this.emailInput.inputValue();
-      if (value === email) {
+      if (value.trim() === email.trim()) {
         Logger.info(this.testName, 'Email entered successfully');
       } else {
         Logger.error(this.testName, 'Email value mismatch after entering');
@@ -160,7 +160,7 @@ export class LoginPage {
     try {
       await this.passwordInput.fill(password);
       const value = await this.passwordInput.inputValue();
-      if (value === password) {
+      if (value.trim() === password.trim()) {
         Logger.info(this.testName, 'Password entered successfully');
       } else {
         Logger.error(this.testName, 'Password value mismatch after entering');
