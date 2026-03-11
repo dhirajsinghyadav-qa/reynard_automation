@@ -256,6 +256,26 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
 
     await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
+
+  test('16. Verify password validation when password has no uppercase letter', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('passwordWithoutUppercase');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Password without uppercase letter',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
 
 /*
