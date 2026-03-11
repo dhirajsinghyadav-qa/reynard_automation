@@ -1,27 +1,70 @@
 {
-  "validUser": {
-    "username": "standard_user",
-    "password": "secret_sauce",
-    "expectedTitle": "Dashboard"
-  },
-  "invalidUser": {
-    "username": "invalid_user",
-    "password": "wrong_password",
-    "expectedError": "Invalid credentials"
-  },
-  "lockedUser": {
-    "username": "locked_out_user",
-    "password": "secret_sauce",
-    "expectedError": "Your account has been locked"
-  },
-  "emptyCredentials": {
-    "username": "",
-    "password": "",
-    "expectedError": "Username is required"
-  },
-  "emptyPassword": {
-    "username": "standard_user",
-    "password": "",
-    "expectedError": "Password is required"
-  }
+  "invalidLogin": [
+    {
+      "scenario": "Unregistered email valid password",
+      "email": "invalid@gmail.com",
+      "password": "Admin@12345",
+      "expectedError": "User is not registered."
+    },
+    {
+      "scenario": "Valid email invalid password",
+      "email": "johan.piet@reynard.nl",
+      "password": "Wrong@12345",
+      "expectedError": "Please enter correct username"
+    },
+    {
+      "scenario": "Invalid email format",
+      "email": "abc@com",
+      "password": "Admin@12345",
+      "expectedError": "Enter Valid Email Address"
+    },
+    {
+      "scenario": "Empty email",
+      "email": "",
+      "password": "Admin@12345",
+      "expectedError": "Enter the email"
+    },
+    {
+      "scenario": "Empty password",
+      "email": "johan.piet@reynard.nl",
+      "password": "",
+      "expectedError": "Enter the password"
+    },
+    {
+      "scenario": "Leading trailing spaces",
+      "email": " johan.piet@reynard.nl ",
+      "password": " Admin@12345 ",
+      "expectedError": "Please enter correct username"
+    },
+    {
+      "scenario": "Password less than 8 characters",
+      "email": "johan.piet@reynard.nl",
+      "password": "Admin",
+      "expectedError": "Password must be between 8-16"
+    },
+    {
+      "scenario": "Password more than 16 characters",
+      "email": "valid@gmail.com",
+      "password": "1234567890123456789",
+      "expectedError": "Password must be between 8-16"
+    },
+    {
+      "scenario": "Password without uppercase",
+      "email": "johan.piet@reynard.nl",
+      "password": "admin@12345",
+      "expectedError": "Password must contain"
+    },
+    {
+      "scenario": "Password without symbol",
+      "email": "johan.piet@reynard.nl",
+      "password": "Admin123456",
+      "expectedError": "Password must contain"
+    },
+    {
+      "scenario": "Password without number",
+      "email": "johan.piet@reynard.nl",
+      "password": "Admin@admin",
+      "expectedError": "Password must contain"
+    }
+  ]
 }

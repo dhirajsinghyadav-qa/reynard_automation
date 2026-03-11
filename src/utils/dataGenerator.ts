@@ -56,60 +56,80 @@ export const invalidCredentialsFactory = (type: string = 'default'): Credentials
       password: 'WrongPassword123',
       description: 'Invalid credentials',
     },
+
+    // 1. Unregistered email valid password
+    unregisteredEmail: {
+      email: 'invalid@gmail.com',
+      password: process.env.ADMIN_PASSWORD || 'Admin@12345',
+      description: 'Unregistered email with valid password',
+    },
+    // 2. Valid email invalid password
     wrongPassword: {
-      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
-      password: 'WrongPassword123',
-      description: 'Correct email, wrong password',
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
+      password: 'Wrong@12345',
+      description: 'Valid email with invalid password',
     },
-    wrongEmail: {
-      email: 'nonexistent@mailinator.com',
-      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
-      description: 'Wrong email, correct password',
+    // 3. Invalid email format
+    invalidEmailFormat: {
+      email: 'abc@com',
+      password: process.env.ADMIN_PASSWORD || 'Admin@12345',
+      description: 'Invalid email format',
     },
+
+    // 4. Empty email
     emptyEmail: {
       email: '',
-      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
+      password: process.env.ADMIN_PASSWORD || 'Admin@12345',
       description: 'Empty email',
     },
+
+    // 5. Empty password
     emptyPassword: {
-      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
       password: '',
       description: 'Empty password',
     },
-    bothEmpty: {
-      email: '',
-      password: '',
-      description: 'Both email and password empty',
+
+    // 6. Leading trailing spaces in email and password
+    leadingTrailingSpaces: {
+      email: ' johan.piet@reynard.nl ',
+      password: ' Admin@12345 ',
+      description: 'Email and password with leading and trailing spaces',
     },
-    invalidEmailFormat: {
-      email: 'invalid-email',
-      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
-      description: 'Invalid email format',
+
+    // 7. Password less than 8 characters
+    passwordLessThan8: {
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
+      password: 'Admin',
+      description: 'Password less than 8 characters',
     },
-    sqlInjection: {
-      email: "admin' OR '1'='1",
-      password: "' OR '1'='1",
-      description: 'SQL injection attempt',
+
+    // 8. Password more than 16 characters
+    passwordMoreThan16: {
+      email: 'valid@gmail.com',
+      password: '1234567890123456789',
+      description: 'Password more than 16 characters',
     },
-    scriptInjection: {
-      email: "<script>alert('xss')</script>",
-      password: "<script>alert('xss')</script>",
-      description: 'Script injection attempt',
+
+    // 9. Password without uppercase
+    passwordWithoutUppercase: {
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
+      password: 'admin@12345',
+      description: 'Password without uppercase letter',
     },
-    longString: {
-      email: `${'a'.repeat(200)}@mailinator.com`,
-      password: 'b'.repeat(200),
-      description: 'Very long input string',
+
+    // 10. Password without symbol
+    passwordWithoutSymbol: {
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
+      password: 'Admin123456',
+      description: 'Password without special symbol',
     },
-    passwordWithSpaces: {
-      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
-      password: '   Admin@2025   ',
-      description: 'Password with leading and trailing spaces',
-    },
-    specialCharacters: {
-      email: 'test+tag@mailinator.com',
-      password: 'Pass@123!#$%^',
-      description: 'Special characters in credentials',
+
+    // 11. Password without number
+    passwordWithoutNumber: {
+      email: process.env.ADMIN_EMAIL || 'johan.piet@reynard.nl',
+      password: 'Admin@admin',
+      description: 'Password without number',
     },
   };
 

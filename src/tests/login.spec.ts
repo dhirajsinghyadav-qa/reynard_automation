@@ -1,11 +1,12 @@
 import { test, expect } from '@fixtures/pageObjectsFixture';
-// import { DataFactory } from '../utils/dataGenerator';
+import { DataFactory } from '../utils/dataGenerator';
 import { LoginPage } from '../pages/LoginPage';
+// import loginData from '@data/loginData.json';
 // import { Helpers } from '../utils/helpers';
 import { Logger } from '../utils/logger';
 import { ENV } from '../config/env';
 
-test.describe('Login Valid Scenarios Suite', () => {
+test.describe('Login Valid and Invalid Scenarios Suite', () => {
   // 🔥 Test Start Log
   test.beforeEach(async ({ page: _page }, testInfo) => {
     Logger.info(testInfo.title, '===== TEST STARTED =====');
@@ -101,4 +102,50 @@ test.describe('Login Valid Scenarios Suite', () => {
     await loginPage.verifyRedirectToSettings();
     await expect(page).toHaveURL(/setting/);
   });
+
+  test('8. Verify login fails with unregistered email and valid password', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('unregisteredEmail');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Unregistered email with valid password',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
+
+/*
+test.describe('Invalid Login Scenarios', () => {
+
+  loginData.invalidLogin.forEach((data) => {
+
+    test(`Verify invalid login: ${data.scenario}`, async ({ page }, testInfo) => {
+
+      const loginPage = new LoginPage(page, testInfo.title);
+
+      await page.goto('/authentication/sign-in');
+
+      await loginPage.getEmailInput().fill(data.email);
+      await loginPage.getPasswordInput().fill(data.password);
+      await loginPage.getLoginButton().click();
+
+      const error = await loginPage.getVisibleError();
+
+      await expect(error).toBeVisible();
+      await expect(error).toContainText(data.expectedError);
+
+    });
+
+  });
+
+}); */

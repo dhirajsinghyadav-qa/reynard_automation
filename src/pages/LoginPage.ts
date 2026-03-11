@@ -14,13 +14,15 @@ export class LoginPage {
   private forgotPasswordLink: Locator;
   private loginButton: Locator;
   private rememberCheckbox: Locator;
-  // private loginSuccessfull: Locator;
   private settingsHeading: Locator;
-  private loginErrorMessage: Locator;
-  /* private invalidEmailMessage: Locator;
+
+  private userNotRegisteredMessage: Locator;
+  private incorrectUsernameMessage: Locator;
+  private invalidEmailMessage: Locator;
   private emptyEmailMessage: Locator;
   private emptyPasswordMessage: Locator;
-  private passwordValidationMessage: Locator; */
+  private passwordLengthValidationMessage: Locator;
+  private passwordFormatValidationMessage: Locator;
 
   constructor(page: Page, testName: string) {
     this.page = page;
@@ -31,13 +33,17 @@ export class LoginPage {
     this.forgotPasswordLink = page.getByRole('link', { name: 'Forgot Your Password?' });
     this.loginButton = page.getByRole('button', { name: 'Log In' });
     this.rememberCheckbox = page.getByRole('checkbox', { name: 'Remember me' });
-    // this.loginSuccessfull = page.getByText('Login Successfully!');
     this.settingsHeading = page.getByRole('paragraph').filter({ hasText: 'Settings' });
-    this.loginErrorMessage = page.locator('text=Invalid'); // adjust if your app has different text
-    /* this.invalidEmailMessage = page.getByText('Please enter a valid email');
-    this.emptyEmailMessage = page.getByText('Please enter your email!');
-    this.emptyPasswordMessage = page.getByText('Please enter your password!');
-    this.passwordValidationMessage = page.getByText('Password must contain'); */
+
+    this.userNotRegisteredMessage = page.getByText('User is not registered.');
+    this.incorrectUsernameMessage = page.getByText('Please enter correct username');
+
+    this.invalidEmailMessage = page.getByText('Enter Valid Email Address');
+    this.emptyEmailMessage = page.getByText('Enter the email');
+    this.emptyPasswordMessage = page.getByText('Enter the password');
+
+    this.passwordLengthValidationMessage = page.getByText('Password must be between 8-16');
+    this.passwordFormatValidationMessage = page.getByText('Password must contain at');
   }
 
   // ---------------- GETTERS ----------------
@@ -60,7 +66,7 @@ export class LoginPage {
     return this.settingsHeading;
   }
 
-  /* async getVisibleError() {
+  async getVisibleError() {
     if (await this.emptyEmailMessage.isVisible().catch(() => false)) {
       return this.emptyEmailMessage;
     }
@@ -70,15 +76,37 @@ export class LoginPage {
     if (await this.invalidEmailMessage.isVisible().catch(() => false)) {
       return this.invalidEmailMessage;
     }
-    if (await this.passwordValidationMessage.isVisible().catch(() => false)) {
-      return this.passwordValidationMessage;
+    if (await this.passwordLengthValidationMessage.isVisible().catch(() => false)) {
+      return this.passwordLengthValidationMessage;
     }
-    if (await this.loginErrorMessage.isVisible().catch(() => false)) {
-      return this.loginErrorMessage;
+    if (await this.passwordFormatValidationMessage.isVisible().catch(() => false)) {
+      return this.passwordFormatValidationMessage;
+    }
+    if (await this.userNotRegisteredMessage.isVisible().catch(() => false)) {
+      return this.userNotRegisteredMessage;
+    }
+    if (await this.incorrectUsernameMessage.isVisible().catch(() => false)) {
+      return this.incorrectUsernameMessage;
     }
     return null;
-  } */
+  }
 
+  // ✅ ADD THIS FUNCTION HERE
+  async waitForAnyError(timeout: number = 10000) {
+    const start = Date.now();
+
+    while (Date.now() - start < timeout) {
+      const error = await this.getVisibleError();
+
+      if (error) {
+        return error;
+      }
+
+      await this.page.waitForTimeout(300);
+    }
+
+    return null;
+  }
   // ---------------- NAVIGATION ----------------
 
   async openMainURL() {
@@ -146,6 +174,7 @@ export class LoginPage {
 
   async clickLoginButton() {
     try {
+      await this.loginButton.waitFor({ state: 'visible' });
       await this.loginButton.click();
       Logger.info(this.testName, 'Login button clicked');
     } catch (error: unknown) {
@@ -192,14 +221,15 @@ export class LoginPage {
 
       await Promise.race([
         this.settingsHeading.waitFor({ state: 'visible', timeout: 5000 }),
-        // this.loginErrorMessage.waitFor({ state: 'visible', timeout: 5000 }),
+        this.userNotRegisteredMessage.waitFor({ state: 'visible', timeout: 5000 }),
       ]);
 
       // Explicit checks with proper logging
       if (await this.settingsHeading.isVisible()) {
         Logger.info(this.testName, 'User login successful and redirected to Settings page');
-      } else if (await this.loginErrorMessage.isVisible()) {
-        const errorText = (await this.loginErrorMessage.textContent()) || 'Unknown login error';
+      } else if (await this.userNotRegisteredMessage.isVisible()) {
+        const errorText =
+          (await this.userNotRegisteredMessage.textContent()) || 'Unknown login error';
         Logger.error(this.testName, `Login failed: ${errorText}`);
         throw new Error(`Login failed: ${errorText}`);
       } else {
@@ -225,6 +255,74 @@ export class LoginPage {
       Logger.error(
         this.testName,
         `Settings redirect failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  // ---------------- INVALID LOGIN FLOW ----------------
+
+  async performInvalidLogin(email: string, password: string, scenario: string) {
+    try {
+      Logger.info(this.testName, `Executing invalid login scenario: ${scenario}`);
+
+      if (email !== undefined && email !== null) {
+        if (email.trim().length === 0) {
+          Logger.warn(this.testName, 'Email is empty');
+          await this.enterEmail('');
+        } else {
+          await this.enterEmail(email);
+          if (email !== email.trim()) {
+            Logger.warn(this.testName, 'Email contains leading or trailing spaces');
+          }
+        }
+      } else {
+        Logger.warn(this.testName, 'Email not provided for this scenario');
+      }
+
+      if (password !== undefined && password !== null) {
+        if (password.trim().length === 0) {
+          Logger.warn(this.testName, 'Password is empty');
+          await this.enterPassword('');
+        } else {
+          if (password !== password.trim()) {
+            Logger.warn(this.testName, 'Password contains leading or trailing spaces');
+          }
+          await this.enterPassword(password);
+        }
+      } else {
+        Logger.warn(this.testName, 'Password not provided for this scenario');
+      }
+
+      await this.clickLoginButton();
+      await this.page.waitForLoadState('networkidle');
+
+      // Wait for any error message to appear
+      await Promise.race([
+        this.userNotRegisteredMessage.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+        this.incorrectUsernameMessage.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+        this.invalidEmailMessage.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+        this.emptyEmailMessage.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+        this.emptyPasswordMessage.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {}),
+        this.passwordLengthValidationMessage
+          .waitFor({ state: 'visible', timeout: 10000 })
+          .catch(() => {}),
+        this.passwordFormatValidationMessage
+          .waitFor({ state: 'visible', timeout: 10000 })
+          .catch(() => {}),
+      ]);
+
+      const errorLocator = await this.getVisibleError();
+      if (errorLocator) {
+        const errorText = await errorLocator.textContent().catch(() => '');
+        Logger.info(this.testName, `Validation detected: ${errorText}`);
+      } else {
+        Logger.warn(this.testName, 'No validation message detected after invalid login');
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        this.testName,
+        `Invalid login execution failed: ${error instanceof Error ? error.message : String(error)}`,
       );
       throw error;
     }
