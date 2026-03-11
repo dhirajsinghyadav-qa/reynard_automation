@@ -142,6 +142,24 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
 
     await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
+
+  test('10. Verify validation for invalid email format', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('invalidEmailFormat');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Invalid email format',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
 
 /*
