@@ -178,6 +178,24 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
 
     await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
+
+  test('12. Verify validation message when password field is empty', async ({ page }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('emptyPassword');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Empty password',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
 
 /*
