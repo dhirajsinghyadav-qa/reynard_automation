@@ -122,6 +122,26 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
 
     await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
+
+  test('9. Verify login fails with valid email and incorrect password', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('wrongPassword');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Valid email with invalid password',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
 });
 
 /*
