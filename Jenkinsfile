@@ -7,23 +7,14 @@
 
 pipeline {
 
-  agent any {
-    // Option 1: Run on any agent with Node.js installed
-    label 'playwright-node'
-
-    // Option 2: Use Docker (recommended for consistency)
-    // docker {
-    //   image 'mcr.microsoft.com/playwright:v1.44.0-jammy'
-    //   args '--ipc=host -u root'
-    // }
-  }
+  agent any
 
   // ── Parameters ─────────────────────────────────────────────
   parameters {
     choice(
       name: 'ENV',
       choices: ['qa'],
-      description: 'Target environment'
+      description: 'Environment to run tests'
     )
     choice(
       name: 'BROWSER',
@@ -33,7 +24,7 @@ pipeline {
     choice(
       name: 'TAG',
       choices: ['all', 'smoke', 'regression'],
-      description: 'Test tag / suite to run'
+      description: 'Test suite'
     )
     booleanParam(
       name: 'HEADLESS',
@@ -53,7 +44,7 @@ pipeline {
     HEADLESS       = "${params.HEADLESS}"
     CI             = 'true'
     NODE_ENV       = 'test'
-    NODE_VERSION   = '18'
+    NODE_VERSION   = '20.19.0'
     ALLURE_RESULTS = 'allure-results'
     PLAYWRIGHT_HTML_REPORT = 'playwright-report'
 
@@ -69,7 +60,7 @@ pipeline {
     disableConcurrentBuilds()
     buildDiscarder(logRotator(numToKeepStr: '20', artifactNumToKeepStr: '10'))
     timestamps()
-    ansiColor('xterm')
+    // ansiColor('xterm')
   }
 
   // ── Triggers ───────────────────────────────────────────────
@@ -114,7 +105,7 @@ pipeline {
     stage('Install Playwright Browsers') {
       steps {
         echo '🌐 Installing Playwright browsers...'
-        bat 'npx playwright install --with-deps chromium firefox webkit'
+        bat 'npx playwright install --with-deps'
       }
     }
 
