@@ -1,12 +1,13 @@
 // ─────────────────────────────────────────────────────────────
-// Jenkinsfile — Playwright Automation Pipeline
-// Supports: QA / Staging / Prod environments
-// Reports : Allure + JUnit + Playwright HTML
+// Jenkinsfile — Playwright TypeScript Automation Pipeline
+// Supports: QA
+// Framework: Playwright + TypeScript
+// Reports : Allure + Playwright HTML
 // ─────────────────────────────────────────────────────────────
 
 pipeline {
 
-  agent {
+  agent any {
     // Option 1: Run on any agent with Node.js installed
     label 'playwright-node'
 
@@ -21,7 +22,7 @@ pipeline {
   parameters {
     choice(
       name: 'ENV',
-      choices: ['qa', 'staging', 'prod'],
+      choices: ['qa'],
       description: 'Target environment'
     )
     choice(
@@ -51,9 +52,10 @@ pipeline {
     ENV            = "${params.ENV}"
     HEADLESS       = "${params.HEADLESS}"
     CI             = 'true'
+    NODE_ENV       = 'test'
     NODE_VERSION   = '18'
     ALLURE_RESULTS = 'allure-results'
-    REPORT_DIR     = 'playwright-report'
+    PLAYWRIGHT_HTML_REPORT = 'playwright-report'
 
     // Jenkins credentials (configure in Jenkins > Manage Credentials)
     BASE_URL = credentials("${params.ENV}-base-url")
@@ -81,49 +83,49 @@ pipeline {
   // ── Stages ─────────────────────────────────────────────────
   stages {
 
-    stage('Checkout') {
+    stage('Checkout code') {
       steps {
-        echo "📥 Checking out branch: ${GIT_BRANCH}"
+        echo "cloning repository..."
         checkout scm
       }
     }
 
-    stage('Setup Node.js') {
+    stage('Verify Node Installation') {
       steps {
-        script {
-          // Use nvm if available, otherwise expect node in PATH
-          sh '''
-            echo "📦 Node version:"
-            node --version
-            echo "📦 NPM version:"
-            npm --version
-          '''
-        }
+
+        bat '''
+        echo Node Version
+        node -v
+
+        echo NPM Version
+        npm -v
+        '''
+
       }
     }
 
-    stage('Install Dependencies') {
+    stage('Install NPM Dependencies') {
       steps {
-        echo '📦 Installing npm dependencies...'
-        sh 'npm ci'
+        echo '📦 Installing dependencies...'
+        bat 'npm ci'
       }
     }
 
     stage('Install Playwright Browsers') {
       steps {
         echo '🌐 Installing Playwright browsers...'
-        sh 'npx playwright install --with-deps chromium firefox webkit'
+        bat 'npx playwright install --with-deps chromium firefox webkit'
       }
     }
 
     stage('Lint') {
       steps {
         echo '🔍 Running ESLint...'
-        sh 'npm run lint || true'  // non-blocking for now
+        bat 'npm run lint || true'  // non-blocking for now
       }
     }
 
-    stage('Run Tests') {
+    stage('Execute Playwright Tests') {
       steps {
         script {
           // Build the playwright command dynamically
@@ -133,12 +135,15 @@ pipeline {
 
           def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
 
-          echo "🚀 Running: ${cmd}"
+          echo "🚀 Running command: ${cmd}"
           echo "🌍 ENV      : ${params.ENV}"
           echo "🌐 Browser  : ${params.BROWSER}"
           echo "🏷️  Tag      : ${params.TAG}"
 
-          sh "ENV=${params.ENV} ${cmd}"
+          bat """
+          set ENV=${params.ENV}
+          ${cmd}
+          """
         }
       }
       post {
