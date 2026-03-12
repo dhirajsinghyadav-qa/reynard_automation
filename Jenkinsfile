@@ -49,9 +49,9 @@ pipeline {
     PLAYWRIGHT_HTML_REPORT = 'playwright-report'
 
     // Jenkins credentials (configure in Jenkins > Manage Credentials)
-    BASE_URL = credentials("${params.ENV}-base-url")
-    USERNAME = credentials("${params.ENV}-username")
-    PASSWORD = credentials("${params.ENV}-password")
+    BASE_URL_QA = credentials("${params.ENV}-base-url")
+    ADMIN_EMAIL = credentials("${params.ENV}-username")
+    ADMIN_PASSWORD = credentials("${params.ENV}-password")
   }
 
   // ── Options ────────────────────────────────────────────────
