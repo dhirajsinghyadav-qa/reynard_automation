@@ -45,6 +45,15 @@ export default defineConfig({
     trace: 'retain-on-failure',
     actionTimeout: 20000,
     navigationTimeout: 30000,
+    /* permissions: [],
+
+    // IMPORTANT: launch options for firefox
+    launchOptions: {
+      firefoxUserPrefs: {
+        'dom.webnotifications.enabled': true,
+        'permissions.default.desktop-notification': 2,
+      },
+    }, */
   },
 
   globalSetup: require.resolve('./global-setup'),
@@ -55,16 +64,25 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-    /*
+
     {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      name: 'Firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        launchOptions: {
+          slowMo: 200, // Slow down actions by 200ms to improve stability in Firefox
+          firefoxUserPrefs: {
+            'toolkit.cosmeticAnimations.enabled': false,
+          },
+        },
+      },
+      workers: 1, // Limit Firefox to 1 worker due to potential instability in parallel execution
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    }, */
+    },
 
     /* Test against mobile viewports. */
     // {

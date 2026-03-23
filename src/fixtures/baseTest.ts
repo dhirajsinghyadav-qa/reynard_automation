@@ -1,55 +1,18 @@
-import { test as base, expect } from '@playwright/test';
-import { Logger } from '../utils/logger';
-import fs from 'fs';
+import { test as base } from '@playwright/test';
 
-export const test = base.extend({});
-
-test.beforeEach(async ({ page: _page }, testInfo) => {
-  Logger.info(testInfo.title, '===== TEST STARTED =====');
-});
-
-test.afterEach(async ({ page }, testInfo) => {
-  const cleanError = testInfo.error?.message?.split('\n')[0] || 'No Error Message';
-
-  // ✅ PASS CASE
-  if (testInfo.status === testInfo.expectedStatus) {
-    // Flaky Detection
-    if (testInfo.retry > 0) {
-      Logger.warn(
-        testInfo.title,
-        `Flaky Test: Test Passed After Retry (${testInfo.retry}) → Marked as Flaky`,
-      );
-    } else {
-      Logger.info(testInfo.title, 'Test Passed Successfully');
-    }
-  }
-
-  // ❌ FAIL CASE
-  else {
-    Logger.error(testInfo.title, `Failure Reason: ${cleanError}`);
-
-    // 📸 Attach Screenshot to Allure
-    const screenshotPath = testInfo.outputPath('failure.png');
-
-    await page.screenshot({ path: screenshotPath, fullPage: true });
-
-    await testInfo.attach('Failure Screenshot', {
-      path: screenshotPath,
-      contentType: 'image/png',
+// ✅ Custom fixture (ONLY context control)
+export const test = base.extend({
+  page: async ({ browser }, use) => {
+    const context = await browser.newContext({
+      permissions: [], // 🔥 block notification popup
     });
 
-    // 📊 Attach Trace
-    const tracePath = testInfo.outputPath('trace.zip');
+    const page = await context.newPage();
 
-    if (fs.existsSync(tracePath)) {
-      await testInfo.attach('Trace File', {
-        path: tracePath,
-        contentType: 'application/zip',
-      });
-    }
-  }
+    await use(page);
 
-  Logger.info(testInfo.title, `Test Duration: ${testInfo.duration} ms`);
+    await context.close();
+  },
 });
 
-export { expect };
+export const expect = test.expect;

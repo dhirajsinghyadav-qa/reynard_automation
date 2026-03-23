@@ -120,9 +120,14 @@ pipeline {
       steps {
         script {
           // Build the playwright command dynamically
-          def grepTag = params.TAG != 'all' ? "--grep @${params.TAG}" : ''
+          def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
           def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
           def workers  = "--workers=${params.WORKERS}"
+
+          // Better brower handling
+          def projects = params.BROWSER == 'all' 
+            ? "--project=chromium --project=firefox --project=webkit"
+            : "--project=${params.BROWSER}"
 
           def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
 

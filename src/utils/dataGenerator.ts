@@ -26,23 +26,74 @@ export interface TestUser {
 }
 
 // ============================================================================
-// VALID CREDENTIALS FACTORY
+// ROLE BASED USER FACTORY
 // ============================================================================
 
-export const validCredentialsFactory = (): Credentials => {
-  return {
-    email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
-    password: process.env.ADMIN_PASSWORD || 'Admin@2025',
-    description: 'Valid admin credentials',
+export const testUserFactory = (
+  role: 'admin' | 'user' | 'viewer' = 'user',
+  id: string = '1',
+): TestUser => {
+  const users: { [key: string]: TestUser } = {
+    admin: {
+      id,
+      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
+      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
+      firstName: 'Admin',
+      lastName: 'User',
+      role: 'admin',
+      isActive: true,
+    },
+    user: {
+      id,
+      email: process.env.VALID_USER_EMAIL || 'user@mailinator.com',
+      password: process.env.VALID_USER_PASSWORD || 'User@2025',
+      firstName: 'Regular',
+      lastName: 'User',
+      role: 'user',
+      isActive: true,
+    },
+    viewer: {
+      id,
+      email: `viewer${id}@mailinator.com`,
+      password: 'Viewer@2025',
+      firstName: 'Viewer',
+      lastName: 'User',
+      role: 'viewer',
+      isActive: true,
+    },
   };
+
+  return users[role];
 };
 
-export const validUserCredentialsFactory = (): Credentials => {
-  return {
-    email: process.env.VALID_USER_EMAIL || 'user@mailinator.com',
-    password: process.env.VALID_USER_PASSWORD || 'User@2025',
-    description: 'Valid regular user credentials',
+// ============================================================================
+// VALID CREDENTIALS FACTORY (ROLE BASED)
+// ============================================================================
+
+export const validCredentialsFactory = (
+  role: 'SUPER_ADMIN' | 'CUSTOM' | 'WEB_USER' | 'ADMIN',
+): Credentials => {
+  const scenarios: { [key: string]: Credentials } = {
+    // 🔥 SUPER ADMIN
+    SUPER_ADMIN: {
+      email: 'toolbox@reynard.nl',
+      password: 'Admin@12345',
+    },
+
+    // 🔥 CUSTOM ROLE USER
+    CUSTOM: {
+      email: 'mihai.brezeanu@reynard.nl',
+      password: 'Admin@12345',
+    },
+
+    // 🔥 WEB ACCESS USER
+    WEB_USER: {
+      email: 'webuser@example.com',
+      password: 'WebUser@12345',
+    },
   };
+
+  return scenarios[role] || scenarios.ADMIN;
 };
 
 // ============================================================================
@@ -131,50 +182,16 @@ export const invalidCredentialsFactory = (type: string = 'default'): Credentials
       password: 'Admin@admin',
       description: 'Password without number',
     },
+
+    // 12. Only Mobile Access User
+    ONLY_MOBILE_USER: {
+      email: 'se@mailinator.com',
+      password: 'Admin@12345',
+      description: 'Only mobile access user',
+    },
   };
 
   return scenarios[type] || scenarios.default;
-};
-
-// ============================================================================
-// TEST USER FACTORY
-// ============================================================================
-
-export const testUserFactory = (
-  role: 'admin' | 'user' | 'viewer' = 'user',
-  id: string = '1',
-): TestUser => {
-  const users: { [key: string]: TestUser } = {
-    admin: {
-      id,
-      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
-      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
-      firstName: 'Admin',
-      lastName: 'User',
-      role: 'admin',
-      isActive: true,
-    },
-    user: {
-      id,
-      email: process.env.VALID_USER_EMAIL || 'user@mailinator.com',
-      password: process.env.VALID_USER_PASSWORD || 'User@2025',
-      firstName: 'Regular',
-      lastName: 'User',
-      role: 'user',
-      isActive: true,
-    },
-    viewer: {
-      id,
-      email: `viewer${id}@mailinator.com`,
-      password: 'Viewer@2025',
-      firstName: 'Viewer',
-      lastName: 'User',
-      role: 'viewer',
-      isActive: true,
-    },
-  };
-
-  return users[role];
 };
 
 // ============================================================================
@@ -205,12 +222,7 @@ export const loginTestScenariosFactory = (): {
   return [
     {
       name: 'Valid Admin Login',
-      credentials: validCredentialsFactory(),
-      expectedResult: 'success',
-    },
-    {
-      name: 'Valid User Login',
-      credentials: validUserCredentialsFactory(),
+      credentials: validCredentialsFactory('ADMIN'),
       expectedResult: 'success',
     },
     {
@@ -237,34 +249,13 @@ export const loginTestScenariosFactory = (): {
 };
 
 // ============================================================================
-// RANDOM DATA GENERATORS
-// ============================================================================
-
-export const randomEmailFactory = (domain: string = 'test.com'): string => {
-  const randomString = Math.random().toString(36).substring(2, 8);
-  return `user_${randomString}@${domain}`;
-};
-
-export const randomPasswordFactory = (length: number = 10): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$';
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-};
-
-// ============================================================================
 // EXPORT FACTORY BUILDER
 // ============================================================================
 
 export const DataFactory = {
   validCredentials: validCredentialsFactory,
-  validUserCredentials: validUserCredentialsFactory,
   invalidCredentials: invalidCredentialsFactory,
   testUser: testUserFactory,
   bulkTestUsers: bulkTestUsersFactory,
   loginScenarios: loginTestScenariosFactory,
-  randomEmail: randomEmailFactory,
-  randomPassword: randomPasswordFactory,
 };

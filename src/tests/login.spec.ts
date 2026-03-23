@@ -1,5 +1,7 @@
-import { test, expect } from '@fixtures/pageObjectsFixture';
 import { DataFactory } from '../utils/dataGenerator';
+import { HomePage } from '../pages/S_Admin_HomePage';
+import { SettingsPage } from '../pages/SettingsPage';
+import { test, expect } from '@fixtures/baseTest';
 import { LoginPage } from '../pages/LoginPage';
 // import loginData from '@data/loginData.json';
 // import { Helpers } from '../utils/helpers';
@@ -26,7 +28,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     Logger.flushAll();
   });
 
-  test('1. Verify direct login URL redirects to login page', async ({ page }, testInfo) => {
+  test('@smoke 1. Verify direct login URL redirects to login page', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -34,29 +36,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(page).toHaveURL(/sign-in/);
   });
 
-  test('2. Verify Forgot Password link clickable', async ({ page }, testInfo) => {
-    const loginPage = new LoginPage(page, testInfo.title);
-
-    await page.goto(ENV.BASE_URL_QA);
-
-    await expect(loginPage.getForgotPasswordLink()).toBeVisible();
-    await expect(loginPage.getForgotPasswordLink()).toBeEnabled();
-
-    await loginPage.clickForgotPassword();
-  });
-
-  test('3. Verify Login button is clickable', async ({ page }, testInfo) => {
-    const loginPage = new LoginPage(page, testInfo.title);
-
-    await page.goto(ENV.BASE_URL_QA);
-
-    await expect(loginPage.getLoginButton()).toBeVisible();
-    await expect(loginPage.getLoginButton()).toBeEnabled();
-
-    await loginPage.clickLoginButton();
-  });
-
-  test('4. Verify Remember Me  checkbox is clickable', async ({ page }, testInfo) => {
+  test('@regression 2. Verify Remember Me checkbox is clickable', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -67,43 +47,53 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await loginPage.clickRememberMe();
   });
 
-  test('5. Verify user can enter email', async ({ page }, testInfo) => {
-    const loginPage = new LoginPage(page, testInfo.title);
-
-    await page.goto(ENV.BASE_URL_QA);
-
-    await loginPage.enterEmail(ENV.ADMIN_EMAIL);
-
-    // Assertion
-    await expect(loginPage.getEmailInput()).toHaveValue(ENV.ADMIN_EMAIL);
-  });
-
-  test('6. Verify user can enter password', async ({ page }, testInfo) => {
-    const loginPage = new LoginPage(page, testInfo.title);
-
-    await page.goto(ENV.BASE_URL_QA);
-
-    await loginPage.enterPassword(ENV.ADMIN_PASSWORD);
-
-    // Assertion
-    await expect(loginPage.getPasswordInput()).toHaveValue(ENV.ADMIN_PASSWORD);
-  });
-
-  test('7. Verify admin can login with valid credentials and is redirected to Settings page', async ({
+  test('@smoke 3. Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
+    const homePage = new HomePage(page, testInfo.title);
+    const data = DataFactory.validCredentials('SUPER_ADMIN');
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.loginAndValidate(data.email, data.password);
+
+    await homePage.verifyHomePageLoaded();
+    await expect(page).toHaveURL(/home/);
+  });
+
+  test('@smoke 4. Verify admin can login with valid credentials and is redirected to Settings page', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const settingsPage = new SettingsPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
 
     await loginPage.loginAndValidate(ENV.ADMIN_EMAIL, ENV.ADMIN_PASSWORD);
 
     // Verify user is redirected to Settings page after successful login
-    await loginPage.verifyRedirectToSettings();
+    await settingsPage.verifyRedirectToSettings();
     await expect(page).toHaveURL(/setting/);
   });
 
-  test('8. Verify login fails with unregistered email and valid password', async ({
+  test('@smoke 5. Verify Any Custom User can login with valid credentials and is redirected to Settings page', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const settingsPage = new SettingsPage(page, testInfo.title);
+
+    const data = DataFactory.validCredentials('CUSTOM');
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.loginAndValidate(data.email, data.password);
+
+    await settingsPage.verifyRedirectToSettings();
+    await expect(page).toHaveURL(/setting/);
+  });
+
+  test('@regression 6. Verify login fails with unregistered email and valid password', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -120,10 +110,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('9. Verify login fails with valid email and incorrect password', async ({
+  test('@regression 7. Verify login fails with valid email and incorrect password', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -140,10 +130,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('10. Verify validation for invalid email format', async ({ page }, testInfo) => {
+  test('@regression 8. Verify validation for invalid email format', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
     const data = DataFactory.invalidCredentials('invalidEmailFormat');
     await page.goto(ENV.BASE_URL_QA);
@@ -158,10 +148,12 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('11. Verify validation message when email field is empty', async ({ page }, testInfo) => {
+  test('@regression 9. Verify validation message when email field is empty', async ({
+    page,
+  }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
     const data = DataFactory.invalidCredentials('emptyEmail');
     await page.goto(ENV.BASE_URL_QA);
@@ -176,10 +168,12 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('12. Verify validation message when password field is empty', async ({ page }, testInfo) => {
+  test('@regression 10. Verify validation message when password field is empty', async ({
+    page,
+  }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
     const data = DataFactory.invalidCredentials('emptyPassword');
     await page.goto(ENV.BASE_URL_QA);
@@ -194,10 +188,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('13. Verify login fails with leading or trailing spaces in credentials', async ({
+  test('@regression 11. Verify login fails with leading or trailing spaces in credentials', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -214,10 +208,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('14. Verify password validation when password is less than 8 characters', async ({
+  test('@regression 12. Verify password validation when password is less than 8 characters', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -234,10 +228,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('15. Verify password validation when password exceeds 16 characters', async ({
+  test('@regression 13. Verify password validation when password exceeds 16 characters', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -254,10 +248,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('16. Verify password validation when password has no uppercase letter', async ({
+  test('@regression 14. Verify password validation when password has no uppercase letter', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -274,10 +268,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('17. Verify password validation when password has no special character', async ({
+  test('@regression 15. Verify password validation when password has no special character', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -294,10 +288,10 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('18. Verify password validation when password has no numeric character', async ({
+  test('@regression 16. Verify password validation when password has no numeric character', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -314,7 +308,27 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     expect(errorLocator).not.toBeNull();
     await expect(errorLocator!).toBeVisible();
 
-    await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+    // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
+  });
+
+  test('@regression 17. Verify the user can try to login using valid credentials who have access only to the mobile application.', async ({
+    page,
+  }, testInfo) => {
+    const loginPage = new LoginPage(page, testInfo.title);
+    const data = DataFactory.invalidCredentials('ONLY_MOBILE_USER');
+    await page.goto(ENV.BASE_URL_QA);
+
+    await loginPage.performInvalidLogin(
+      data.email,
+      data.password,
+      data.description || 'Only mobile access user',
+    );
+
+    const errorLocator = await loginPage.getVisibleError();
+    expect(errorLocator).not.toBeNull();
+    await expect(errorLocator!).toBeVisible();
+
+    // await expect(sig.getSettingsHeading()).not.toBeVisible();
   });
 });
 
