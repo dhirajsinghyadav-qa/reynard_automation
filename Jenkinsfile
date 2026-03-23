@@ -66,6 +66,7 @@ pipeline {
   // ── Triggers ───────────────────────────────────────────────
   triggers {
     // Scheduled run every day at midnight
+    githubPush()  // Trigger on GitHub push events
     cron('0 0 * * *')
     // Uncomment to trigger on SCM push:
     // pollSCM('H/5 * * * *')
@@ -116,35 +117,35 @@ pipeline {
       }
     }
 
-    stage('Execute Playwright Tests') {
-      steps {
-        script {
-          // Build the playwright command dynamically
-          def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
-          def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
-          def workers  = "--workers=${params.WORKERS}"
+    // ── PARALLEL EXECUTION ────────────────────────────────────
+    stage('Run Tests (Parallel Browsers)') {
+      parallel {
 
-          // Better brower handling
-          def projects = params.BROWSER == 'all' 
-            ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"
-
-          def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
-
-          echo "🚀 Running command: ${cmd}"
-          echo "🌍 ENV      : ${params.ENV}"
-          echo "🌐 Browser  : ${params.BROWSER}"
-          echo "🏷️  Tag      : ${params.TAG}"
-
-          bat """
-          set ENV=${params.ENV}
-          ${cmd}
-          """
+        stage('Chromium') {
+          when { expression { params.BROWSER == 'chromium' || params.BROWSER == 'all' } }
+          steps {
+            script {
+              runTests("chromium")
+            }
+          }
         }
-      }
-      post {
-        always {
-          echo '📊 Test execution complete'
+
+        stage('Firefox') {
+          when { expression { params.BROWSER == 'firefox' || params.BROWSER == 'all' } }
+          steps {
+            script {
+              runTests("firefox")
+            }
+          }
+        }
+
+        stage('Webkit') {
+          when { expression { params.BROWSER == 'webkit' || params.BROWSER == 'all' } }
+          steps {
+            script {
+              runTests("webkit")
+            }
+          }
         }
       }
     }
@@ -232,5 +233,26 @@ pipeline {
         cleanWhenUnstable: false
       )
     }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 🔥 SHARED FUNCTION (Reusable)
+// ─────────────────────────────────────────────────────────────
+def runTests(String browser) {
+
+  def tagCmd = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
+  def workerCmd = "--workers=${params.WORKERS}"
+
+  def cmd = "npx playwright test --project=${browser} ${tagCmd} ${workerCmd}"
+
+  echo "🚀 Running on ${browser}"
+  echo "Command: ${cmd}"
+
+  retry(2) {   // ✅ Retry logic
+    bat """
+    set ENV=${params.ENV}
+    ${cmd}
+    """
   }
 }
