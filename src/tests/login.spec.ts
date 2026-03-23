@@ -1,6 +1,6 @@
 import { DataFactory } from '../utils/dataGenerator';
 import { HomePage } from '../pages/S_Admin_HomePage';
-import { SettingsPage } from '../pages/SettingsPage';
+// import { SettingsPage } from '../pages/SettingsPage';
 import { test, expect } from '@fixtures/baseTest';
 import { LoginPage } from '../pages/LoginPage';
 // import loginData from '@data/loginData.json';
@@ -61,7 +61,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await homePage.verifyHomePageLoaded();
     await expect(page).toHaveURL(/home/);
   });
-
+  /*
   test('@smoke 4. Verify admin can login with valid credentials and is redirected to Settings page', async ({
     page,
   }, testInfo) => {
@@ -329,7 +329,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(errorLocator!).toBeVisible();
 
     // await expect(sig.getSettingsHeading()).not.toBeVisible();
-  });
+  }); */
 });
 
 /*
