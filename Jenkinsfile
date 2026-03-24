@@ -18,7 +18,7 @@ pipeline {
     )
     choice(
       name: 'BROWSER',
-      choices: ['all', 'chromium', 'firefox', 'webkit'],
+      choices: ['chromium', 'firefox', 'webkit', 'all'],
       description: 'Browser to run tests on'
     )
     choice(
@@ -122,7 +122,7 @@ pipeline {
         script {
           // Build the playwright command dynamically
           def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
-          // def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
+          def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
           def workers  = "--workers=${params.WORKERS}"
 
           // Better brower handling
