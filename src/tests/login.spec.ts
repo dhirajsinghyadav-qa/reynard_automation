@@ -35,7 +35,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await loginPage.verifyLoginPageLoaded();
     await expect(page).toHaveURL(/sign-in/);
   });
-  /*
+
   test('@regression 2. Verify Remember Me checkbox is clickable', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
 
@@ -45,7 +45,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(loginPage.getRememberCheckbox()).toBeEnabled();
 
     await loginPage.clickRememberMe();
-  });*/
+  });
 
   test('@smoke 3. Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
     page,
