@@ -126,11 +126,20 @@ pipeline {
           def workers  = "--workers=${params.WORKERS}"
 
           // Better brower handling
-          def browserCmd = params.BROWSER == 'all'
-            ? ""
-            : "--project=${params.BROWSER}"
+          def isManual = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null
 
-          def cmd = "npx playwright test ${browserCmd} ${grepTag} ${workers}".trim()
+          def browser
+
+          if (isManual) {
+            browser = params.BROWSER == 'all'
+              ? "--project=chromium --project=firefox --project=webkit"
+              : "--project=${params.BROWSER}"
+          } else {
+            // 🔥 Webhook → FORCE ALL
+            browser = "--project=chromium --project=firefox --project=webkit"
+          }
+
+          def cmd = "npx playwright test ${browser} ${grepTag} ${workers}".trim()
 
           echo "🚀 Running command: ${cmd}"
           echo "🌍 ENV      : ${params.ENV}"
