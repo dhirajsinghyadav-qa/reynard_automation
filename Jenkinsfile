@@ -123,7 +123,7 @@ pipeline {
           // Build the playwright command dynamically
           def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
           def project  = params.BROWSER == 'all' 
-            ? ''
+            ? "--project=chromium --project=firefox --project=webkit"
             : "--project=${params.BROWSER}"
           def workers  = "--workers=${params.WORKERS}"
 
