@@ -18,7 +18,7 @@ pipeline {
     )
     choice(
       name: 'BROWSER',
-      choices: ['all', 'chromium', 'firefox', 'webkit'],
+      choices: ['chromium', 'firefox', 'webkit', 'all'],
       description: 'Browser to run tests on'
     )
     choice(
