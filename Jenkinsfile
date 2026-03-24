@@ -127,8 +127,6 @@ pipeline {
 
           // Better brower handling
           def browserCmd = params.BROWSER == 'all'
-            ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"
 
           def cmd = "npx playwright test ${browserCmd} ${grepTag} ${workers}".trim()
 
