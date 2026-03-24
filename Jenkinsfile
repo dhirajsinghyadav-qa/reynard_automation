@@ -18,7 +18,7 @@ pipeline {
     )
     choice(
       name: 'BROWSER',
-      choices: ['chromium', 'firefox', 'webkit', 'all'],
+      choices: ['all', 'chromium', 'firefox', 'webkit'],
       description: 'Browser to run tests on'
     )
     choice(
@@ -122,15 +122,24 @@ pipeline {
         script {
           // Build the playwright command dynamically
           def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
-          def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
+          // def project  = params.BROWSER != 'all' ? "--project=${params.BROWSER}" : ''
           def workers  = "--workers=${params.WORKERS}"
 
           // Better brower handling
-          def projects = params.BROWSER == 'all'
-            ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"
+          def isManual = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause) != null
 
-          def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
+          def browser
+
+          if (isManual) {
+            browser = params.BROWSER == 'all'
+              ? "--project=chromium --project=firefox --project=webkit"
+              : "--project=${params.BROWSER}"
+          } else {
+            // 🔥 Webhook → FORCE ALL
+            browser = "--project=chromium --project=firefox --project=webkit"
+          }
+
+          def cmd = "npx playwright test ${browser} ${grepTag} ${workers}".trim()
 
           echo "🚀 Running command: ${cmd}"
           echo "🌍 ENV      : ${params.ENV}"
