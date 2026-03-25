@@ -78,7 +78,7 @@ jobs:
       - name: 'Check Code Formatting'
         run: npm run format:check
 
-      - name: '✅ Lint and Format Passed'
+      - name: 'Lint and Format Passed'
         run: echo "Code quality checks passed!"
 
   # ==========================================================================
@@ -116,53 +116,47 @@ jobs:
       - name: 'Install Playwright Browsers'
         run: npx playwright install --with-deps
 
-      - name: Resolve Dynamic Config (UI + File + Default)
+      # STEP 1: Read config file
+      - name: Read CI Config
+        id: config
         run: |
-          echo "Resolving execution config..."
-
-          # -------------------------------
-          # STEP 1: Read from UI inputs
-          # -------------------------------
-          BROWSER="${{ github.event.inputs.browser || '' }}"
-          TAG="${{ github.event.inputs.tag || '' }}"
-          WORKERS="${{ github.event.inputs.workers || '' }}"
-
-          echo "UI Inputs:"
-          echo "Browser: $BROWSER"
-          echo "Tag: $TAG"
-          echo "Workers: $WORKERS"
-
-          # -------------------------------
-          # FALLBACK TO JSON IF EMPTY
-          # -------------------------------
-          if [ -z "$BROWSER" ]; then
-            BROWSER=$(jq -r '.browser // "all"' ci-config.json)
+          if [ -f ci-config.json ]; then
+            BROWSER=$(jq -r '.browser' ci-config.json)
+            TAG=$(jq -r '.tag' ci-config.json)
+            WORKERS=$(jq -r '.workers' ci-config.json)
+          else
+            BROWSER="all"
+            TAG="all"
+            WORKERS="4"
           fi
 
-          if [ -z "$TAG" ]; then
-            TAG=$(jq -r '.tag // "all"' ci-config.json)
-          fi
+          echo "CONFIG_BROWSER=$BROWSER" >> $GITHUB_ENV
+          echo "CONFIG_TAG=$TAG" >> $GITHUB_ENV
+          echo "CONFIG_WORKERS=$WORKERS" >> $GITHUB_ENV
 
-          if [ -z "$WORKERS" ]; then
-            WORKERS=$(jq -r '.workers // "4"' ci-config.json)
-          fi
+      # STEP 2: Override with manual input (if provided)
+      - name: Resolve Final Parameters
+        run: |
+          FINAL_BROWSER="${{ github.event.inputs.browser }}"
+          FINAL_TAG="${{ github.event.inputs.tag }}"
+          FINAL_WORKERS="${{ github.event.inputs.worker }}"
 
-          # -------------------------------
-          # FINAL SAFETY
-          # -------------------------------
-          [ -z "$BROWSER" ] && BROWSER="all"
-          [ -z "$TAG" ] && TAG="all"
-          [ -z "$WORKERS" ] && WORKERS="4"
+          # fallback to config if empty
+          if [ -z "$FINAL_BROWSER" ]; then FINAL_BROWSER="$CONFIG_BROWSER"; fi
+          if [ -z "$FINAL_TAG" ]; then FINAL_TAG="$CONFIG_TAG"; fi
+          if [ -z "$FINAL_WORKERS" ]; then FINAL_WORKERS="$CONFIG_WORKERS"; fi
 
-          echo "BROWSER=$BROWSER" >> $GITHUB_ENV
-          echo "TAG=$TAG" >> $GITHUB_ENV
-          echo "WORKERS=$WORKERS" >> $GITHUB_ENV
+          echo "BROWSER=$FINAL_BROWSER" >> $GITHUB_ENV
+          echo "TAG=$FINAL_TAG" >> $GITHUB_ENV
+          echo "WORKERS=$FINAL_WORKERS" >> $GITHUB_ENV
 
-          echo "✅ FINAL CONFIG:"
-          echo "$BROWSER | $TAG | $WORKERS"
+          echo "FINAL CONFIG:"
+          echo "Browser: $FINAL_BROWSER"
+          echo "Tag: $FINAL_TAG"
+          echo "Workers: $FINAL_WORKERS"
 
-      # STEP: Run Playwright Tests (Dynamic)
-      - name: 'Run Playwright Tests - QA (Dynamic)'
+      # STEP 3: Run Playwright Tests (Dynamic)
+      - name: 'Run Playwright Tests - QA'
         env:
           TEST_ENV: qa
 
