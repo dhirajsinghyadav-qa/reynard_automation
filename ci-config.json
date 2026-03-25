@@ -1,5 +1,5 @@
 {
-    "browser": "all",
+    "browser": "firefox",
     "tag": "smoke",
     "worker": 4
 }
