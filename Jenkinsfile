@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -170,6 +170,36 @@ pipeline {
           set ENV=${params.ENV}
           ${cmd}
           """
+        }
+      }
+    } */
+
+    stage('Execute Playwright Tests') {
+      steps {
+        script {
+
+          def browser = env.DYNAMIC_BROWSER
+          def tag     = env.DYNAMIC_TAG
+          def workers = env.DYNAMIC_WORKERS
+
+          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ''
+
+          def runTest = { browserName ->
+            bat """
+            echo Running on ${browserName}
+            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
+            """
+          }
+
+          if (browser == 'all') {
+            parallel(
+              "Chromium": { runTest('chromium') },
+              "Firefox" : { runTest('firefox') },
+              "WebKit"  : { runTest('webkit') }
+            )
+          } else {
+            runTest(browser)
+          }
         }
       }
     }
