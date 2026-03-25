@@ -1,0 +1,5 @@
+{
+    "browser": "chromium",
+    "tag": "smoke",
+    "workers": 4
+}
