@@ -118,19 +118,17 @@ jobs:
 
       - name: 📄 Read CI Config
         run: |
-          if [ -f ci-config.json ]; then
-            echo "Reading config file..."
+          CONFIG=$(cat ci-config.json)
 
-            BROWSER=$(jq -r '.browser' ci-config.json)
-            TAG=$(jq -r '.tag' ci-config.json)
-            WORKERS=$(jq -r '.workers' ci-config.json)
-          else
-            echo "No config file found, using default..."
+          BROWSER=$(echo $CONFIG | jq -r '.browser')
+          TAG=$(echo $CONFIG | jq -r '.tag')
+          WORKERS=$(echo $CONFIG | jq -r '.workers')
 
-            BROWSER="all"
-            TAG="all"
-            WORKERS="4"
-          fi
+          BROWSER=${BROWSER:-all}
+          TAG=${TAG:-all}
+          WORKERS=${WORKERS:-4}
+
+          if [ "$WORKERS" = "null" ]; then WORKERS="4"; fi
 
           echo "BROWSER=$BROWSER" >> $GITHUB_ENV
           echo "TAG=$TAG" >> $GITHUB_ENV
@@ -165,6 +163,13 @@ jobs:
             PROJECT=""
           else
             PROJECT="--project=$BROWSER"
+          fi
+
+          # -------------------------------
+          # WORKERS logic
+          # -------------------------------
+          if [ "$WORKERS" = "all" ]; then
+            WORKERS="4"
           fi
 
           # -------------------------------
