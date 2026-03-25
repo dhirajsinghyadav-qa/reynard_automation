@@ -1,5 +1,5 @@
 {
   "browser": "all",
   "tag": "regression",
-  "workers": 1
+  "workers": 4
 }
