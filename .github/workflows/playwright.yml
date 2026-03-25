@@ -12,6 +12,32 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - chromium
+          - firefox
+          - webkit
+      tag:
+        description: 'Test Tag'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - smoke
+          - regression
+      worker:
+        description: 'Worker Count'
+        required: false
+        default: 4
+        type: number
 
 # ============================================================================
 # GLOBAL ENV VARIABLES
@@ -90,22 +116,71 @@ jobs:
       - name: 'Install Playwright Browsers'
         run: npx playwright install --with-deps
 
-      - name: 'Run Playwright Tests - QA'
+      - name: 📄 Read CI Config
+        run: |
+          if [ -f ci-config.json ]; then
+            echo "Reading config file..."
+
+            BROWSER=$(jq -r '.browser' ci-config.json)
+            TAG=$(jq -r '.tag' ci-config.json)
+            WORKERS=$(jq -r '.workers' ci-config.json)
+          else
+            echo "No config file found, using default..."
+
+            BROWSER="all"
+            TAG="all"
+            WORKERS="4"
+          fi
+
+          echo "BROWSER=$BROWSER" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "WORKERS=$WORKERS" >> $GITHUB_ENV
+
+      # ✅ STEP: Run Playwright Tests (Dynamic)
+      - name: '🚀 Run Playwright Tests - QA (Dynamic)'
         env:
           TEST_ENV: qa
 
-          # ------------------------------------------------------------------
-          # UAT Variables (COMMENTED)
-          # ------------------------------------------------------------------
-          # BASE_URL_UAT: ${{ secrets.BASE_URL_UAT }}
-
+          # URLs & Credentials
           BASE_URL_QA: ${{ secrets.BASE_URL_QA }}
-
           ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
-        run: npm run test:ci
-        continue-on-error: true
+        run: |
+          echo "🔧 Resolving dynamic execution..."
+
+          # -------------------------------
+          # TAG logic
+          # -------------------------------
+          if [ "$TAG" != "all" ]; then
+            GREP="--grep @$TAG"
+          else
+            GREP=""
+          fi
+
+          # -------------------------------
+          # BROWSER logic
+          # -------------------------------
+          if [ "$BROWSER" = "all" ]; then
+            PROJECT=""
+          else
+            PROJECT="--project=$BROWSER"
+          fi
+
+          # -------------------------------
+          # FINAL COMMAND
+          # -------------------------------
+          echo "🚀 Running: npx playwright test $GREP $PROJECT --workers=$WORKERS"
+
+          npx playwright test $GREP $PROJECT --workers=$WORKERS
+
+      # ✅ STEP: Upload Report
+      - name: 📊 Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
 
       # ================================
       # DEBUG STEP
