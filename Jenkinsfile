@@ -89,21 +89,21 @@ pipeline {
 
             def config = readJSON file: 'ci-config.json'
 
-            env.DYNAMIC_BROWSERS = config.browser ?: 'all'
-            env.DYNAMIC_TAG      = config.tag ?: 'all'
-            env.DYNAMIC_WORKERS  = config.workers?.toString() ?: '4'
+            env.DYNAMIC_BROWSER = config.browser ?: 'all'
+            env.DYNAMIC_TAG     = config.tag ?: 'all'
+            env.DYNAMIC_WORKERS = config.workers?.toString() ?: '4'
 
-            echo " CI Config Loaded:"
-            echo "Browser: ${env.DYNAMIC_BROWSERS}"
-            echo "Tag: ${env.DYNAMIC_TAG}"
-            echo "Workers: ${env.DYNAMIC_WORKERS}"
+            echo "✅ CI Config Loaded:"
+            echo "Browser : ${env.DYNAMIC_BROWSER}"
+            echo "Tag     : ${env.DYNAMIC_TAG}"
+            echo "Workers : ${env.DYNAMIC_WORKERS}"
 
           } else {
             echo "⚠️ ci-config.json not found, using default params"
 
-            env.DYNAMIC_BROWSERS =  param.BROWSER
-            env.DYNAMIC_TAG      =  param.TAG
-            env.DYNAMIC_WORKERS  =  param.WORKERS
+            env.DYNAMIC_BROWSER = params.BROWSER
+            env.DYNAMIC_TAG     = params.TAG
+            env.DYNAMIC_WORKERS = params.WORKERS
           }
         }
       }
