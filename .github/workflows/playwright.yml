@@ -33,7 +33,7 @@ on:
           - all
           - smoke
           - regression
-      worker:
+      workers:
         description: 'Worker Count'
         required: false
         default: 4
@@ -139,12 +139,17 @@ jobs:
         run: |
           FINAL_BROWSER="${{ github.event.inputs.browser }}"
           FINAL_TAG="${{ github.event.inputs.tag }}"
-          FINAL_WORKERS="${{ github.event.inputs.worker }}"
+          FINAL_WORKERS="${{ github.event.inputs.workers }}"
 
           # fallback to config if empty
           if [ -z "$FINAL_BROWSER" ]; then FINAL_BROWSER="$CONFIG_BROWSER"; fi
           if [ -z "$FINAL_TAG" ]; then FINAL_TAG="$CONFIG_TAG"; fi
           if [ -z "$FINAL_WORKERS" ]; then FINAL_WORKERS="$CONFIG_WORKERS"; fi
+
+          # final safety (VERY IMPORTANT)
+          if [ -z "$FINAL_WORKERS" ] || [ "$FINAL_WORKERS" = "null" ]; then
+            FINAL_WORKERS="4"
+          fi
 
           echo "BROWSER=$FINAL_BROWSER" >> $GITHUB_ENV
           echo "TAG=$FINAL_TAG" >> $GITHUB_ENV
