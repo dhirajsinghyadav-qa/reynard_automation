@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -172,9 +172,39 @@ pipeline {
           """
         }
       }
-    }
+    } */
 
-    /* stage('Execute Playwright Tests') {
+/*     stage('Execute Playwright Tests') {
+      steps {
+        script {
+
+          def browser = env.DYNAMIC_BROWSER
+          def tag     = env.DYNAMIC_TAG
+          def workers = env.DYNAMIC_WORKERS
+
+          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ''
+
+          def runTest = { browserName ->
+            bat """
+            echo Running on ${browserName}
+            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
+            """
+          }
+
+          if (browser == 'all') {
+            parallel(
+              "Chromium": { runTest('chromium') },
+              "Firefox" : { runTest('firefox') },
+              "WebKit"  : { runTest('webkit') }
+            )
+          } else {
+            runTest(browser)
+          }
+        }
+      }
+    } */
+
+    stage('Execute Playwright Tests') {
       steps {
         script {
           // Build the playwright command dynamically
@@ -187,7 +217,7 @@ pipeline {
           // Better brower handling
           /* def browserCmd = params.BROWSER == 'all'
             ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"
+            : "--project=${params.BROWSER}"*/
 
           def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
 
@@ -207,7 +237,7 @@ pipeline {
           echo '📊 Test execution complete'
         }
       }
-    } */
+    }
 
     stage('Generate Allure Report') {
       steps {
