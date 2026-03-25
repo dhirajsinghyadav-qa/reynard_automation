@@ -116,26 +116,53 @@ jobs:
       - name: 'Install Playwright Browsers'
         run: npx playwright install --with-deps
 
-      - name: 📄 Read CI Config
+      - name: Resolve Dynamic Config (UI + File + Default)
         run: |
-          CONFIG=$(cat ci-config.json)
+          echo "Resolving execution config..."
 
-          BROWSER=$(echo $CONFIG | jq -r '.browser')
-          TAG=$(echo $CONFIG | jq -r '.tag')
-          WORKERS=$(echo $CONFIG | jq -r '.workers')
+          # -------------------------------
+          # STEP 1: Read from UI inputs
+          # -------------------------------
+          BROWSER="${{ github.event.inputs.browser || '' }}"
+          TAG="${{ github.event.inputs.tag || '' }}"
+          WORKERS="${{ github.event.inputs.workers || '' }}"
 
-          BROWSER=${BROWSER:-all}
-          TAG=${TAG:-all}
-          WORKERS=${WORKERS:-4}
+          echo "UI Inputs:"
+          echo "Browser: $BROWSER"
+          echo "Tag: $TAG"
+          echo "Workers: $WORKERS"
 
-          if [ "$WORKERS" = "null" ]; then WORKERS="4"; fi
+          # -------------------------------
+          # FALLBACK TO JSON IF EMPTY
+          # -------------------------------
+          if [ -z "$BROWSER" ]; then
+            BROWSER=$(jq -r '.browser // "all"' ci-config.json)
+          fi
+
+          if [ -z "$TAG" ]; then
+            TAG=$(jq -r '.tag // "all"' ci-config.json)
+          fi
+
+          if [ -z "$WORKERS" ]; then
+            WORKERS=$(jq -r '.workers // "4"' ci-config.json)
+          fi
+
+          # -------------------------------
+          # FINAL SAFETY
+          # -------------------------------
+          [ -z "$BROWSER" ] && BROWSER="all"
+          [ -z "$TAG" ] && TAG="all"
+          [ -z "$WORKERS" ] && WORKERS="4"
 
           echo "BROWSER=$BROWSER" >> $GITHUB_ENV
           echo "TAG=$TAG" >> $GITHUB_ENV
           echo "WORKERS=$WORKERS" >> $GITHUB_ENV
 
-      # ✅ STEP: Run Playwright Tests (Dynamic)
-      - name: '🚀 Run Playwright Tests - QA (Dynamic)'
+          echo "✅ FINAL CONFIG:"
+          echo "$BROWSER | $TAG | $WORKERS"
+
+      # STEP: Run Playwright Tests (Dynamic)
+      - name: 'Run Playwright Tests - QA (Dynamic)'
         env:
           TEST_ENV: qa
 
@@ -145,7 +172,7 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
         run: |
-          echo "🔧 Resolving dynamic execution..."
+          echo "Resolving dynamic execution..."
 
           # -------------------------------
           # TAG logic
@@ -175,7 +202,7 @@ jobs:
           # -------------------------------
           # FINAL COMMAND
           # -------------------------------
-          echo "🚀 Running: npx playwright test $GREP $PROJECT --workers=$WORKERS"
+          echo "Running: npx playwright test $GREP $PROJECT --workers=$WORKERS"
 
           npx playwright test $GREP $PROJECT --workers=$WORKERS
 
