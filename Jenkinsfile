@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    /* stage('Execute Playwright Tests') {
+    stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -156,18 +156,15 @@ pipeline {
 
           // ✅ BEST PRACTICE
           def runTest = { browserName ->
-
-            def cmd = "npx playwright test ${grepTag} --project=${browserName}  --workers=${workers}".trim()
-
-            echo "🚀 Running command: ${cmd}"
-            echo "🌐 Browser : ${browserName}"
-            echo "🏷️ Tag     : ${tag}"
-            echo "⚙️ Workers : ${workers}"
-
             bat """
-            set ENV=${params.ENV}
-            ${cmd}
-            """   
+            echo ======================================
+            echo Running on ${browserName}
+            echo Tag: ${tag}
+            echo Workers: ${workers}
+            echo ======================================
+
+            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
+            """
           }
 
           // Parallel execution logic (MAIN FIX)
@@ -187,9 +184,9 @@ pipeline {
           }
         }
       }
-    } */
+    }
 
-    stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -217,7 +214,7 @@ pipeline {
           }
         }
       }
-    }
+    } */
 
     stage('Generate Allure Report') {
       steps {
