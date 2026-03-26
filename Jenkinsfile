@@ -157,7 +157,7 @@ pipeline {
           // ✅ BEST PRACTICE
           def runTest = { browserName ->
 
-            def cmd = "npx playwright test --project=${browserName} ${grepTag} --workers=${workers}".trim()
+            def cmd = "npx playwright test ${grepTag} --project=${browserName}  --workers=${workers}".trim()
 
             echo "🚀 Running command: ${cmd}"
             echo "🌐 Browser : ${browserName}"
@@ -170,7 +170,7 @@ pipeline {
             """   
           }
 
-          // ✅ Parallel execution logic (MAIN FIX)
+          // Parallel execution logic (MAIN FIX)
           if (browser == 'all') {
 
             parallel(
@@ -181,7 +181,7 @@ pipeline {
 
           } else {
 
-            // ✅ Single browser execution
+            // Single browser execution
             runTest(browser)
 
           }
