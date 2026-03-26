@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -187,9 +187,9 @@ pipeline {
           }
         }
       }
-    }
+    } */
 
-    /* stage('Execute Playwright Tests') {
+    stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -217,7 +217,7 @@ pipeline {
           }
         }
       }
-    } */
+    }
 
     stage('Generate Allure Report') {
       steps {
