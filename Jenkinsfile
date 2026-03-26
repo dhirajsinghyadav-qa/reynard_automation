@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    /* stage('Execute Playwright Tests') {
+    stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -155,26 +155,41 @@ pipeline {
           def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ''
 
           // ✅ BEST PRACTICE
-          def project = browser == 'all'
-            ? ''   // no project = all browsers
-            : "--project=${browser}"
+          def runTest = { browserName ->
 
-          def cmd = "npx playwright test ${grepTag} ${project} --workers=${workers}".trim()
+            def cmd = "npx playwright test --project=${browserName} ${grepTag} --workers=${workers}".trim()
 
-          echo "🚀 Running command: ${cmd}"
-          echo "🌐 Browser : ${browser}"
-          echo "🏷️ Tag     : ${tag}"
-          echo "⚙️ Workers : ${workers}"
+            echo "🚀 Running command: ${cmd}"
+            echo "🌐 Browser : ${browserName}"
+            echo "🏷️ Tag     : ${tag}"
+            echo "⚙️ Workers : ${workers}"
 
-          bat """
-          set ENV=${params.ENV}
-          ${cmd}
-          """
+            bat """
+            set ENV=${params.ENV}
+            ${cmd}
+            """   
+          }
+
+          // ✅ Parallel execution logic (MAIN FIX)
+          if (browser == 'all') {
+
+            parallel(
+              "Chromium": { runTest('chromium') },
+              "Firefox" : { runTest('firefox') },
+              "WebKit"  : { runTest('webkit') }
+            )
+
+          } else {
+
+            // ✅ Single browser execution
+            runTest(browser)
+
+          }
         }
       }
-    } */
+    }
 
-/*     stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -203,41 +218,6 @@ pipeline {
         }
       }
     } */
-
-    stage('Execute Playwright Tests') {
-      steps {
-        script {
-          // Build the playwright command dynamically
-          def grepTag = params.TAG != 'all' ? "--grep \"@${params.TAG}\"" : ''
-          def project  = params.BROWSER == 'all' 
-            ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"
-          def workers  = "--workers=${params.WORKERS}"
-
-          // Better brower handling
-          /* def browserCmd = params.BROWSER == 'all'
-            ? "--project=chromium --project=firefox --project=webkit"
-            : "--project=${params.BROWSER}"*/
-
-          def cmd = "npx playwright test ${grepTag} ${project} ${workers}".trim()
-
-          echo "🚀 Running command: ${cmd}"
-          echo "🌍 ENV      : ${params.ENV}"
-          echo "🌐 Browser  : ${params.BROWSER}"
-          echo "🏷️  Tag      : ${params.TAG}"
-
-          bat """
-          set ENV=${params.ENV}
-          ${cmd}
-          """
-        }
-      }
-      post {
-        always {
-          echo '📊 Test execution complete'
-        }
-      }
-    }
 
     stage('Generate Allure Report') {
       steps {
