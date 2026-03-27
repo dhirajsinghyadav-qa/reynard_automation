@@ -186,7 +186,7 @@ pipeline {
           // =========================================================
           // ✅ STEP 1: Detect Scheduled Build
           // =========================================================
-          def isScheduledBuild = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause) != null
+          def isScheduledBuild = currentBuild.getBuildCauses().toString().contains('TimerTrigger')
           // =========================================================
           // ✅ STEP 2: Override TAG based on time (ONLY for scheduler)
           // =========================================================
@@ -207,7 +207,7 @@ pipeline {
           def runTest = { browserName ->
             bat """
             echo Running on ${browserName}
-            echo Tag: ${tag}, Workers: ${workers}
+            echo TAG: ${dynamicTag}, Workers: ${workers}
             npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
             """
           }
