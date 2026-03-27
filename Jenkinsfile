@@ -156,11 +156,8 @@ pipeline {
 
           def runTest = { browserName ->
             bat """
-            echo ======================================
             echo Running on ${browserName}
-            echo Tag: ${tag}
-            echo Workers: ${workers}
-            echo ======================================
+            echo Tag: ${tag}, Workers: ${workers}
             npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
             """
           }
