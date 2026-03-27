@@ -65,12 +65,12 @@ pipeline {
   }
 
   // ── Triggers ───────────────────────────────────────────────
-  triggers {
+  /* triggers {
     // Scheduled run every day at midnight
     cron('H/10 * * * *')
     // Uncomment to trigger on SCM push:
     // pollSCM('H/10 * * * *')
-  }
+  } */
 
   // ── Stages ─────────────────────────────────────────────────
   stages {
@@ -186,17 +186,18 @@ pipeline {
           // =========================================================
           // ✅ STEP 1: Detect Scheduled Build
           // =========================================================
-          def isScheduledBuild = currentBuild.getBuildCauses().toString().contains('TimerTrigger')
+          // def isScheduledBuild = currentBuild.getBuildCauses().toString().contains('TimerTrigger')
           // =========================================================
           // ✅ STEP 2: Override TAG based on time (ONLY for scheduler)
           // =========================================================
-          def dynamicTag = tag
+          /* def dynamicTag = tag
           if (isScheduledBuild) {
             dynamicTag = "regression"
             echo "🕒 Cron Build Detected → TAG forced to: ${dynamicTag}"
           } else {
             echo "🧑 Manual Build → TAG used: ${dynamicTag}"
-          }
+          } */
+          def dynamicTag = tag
           // =========================================================
           // ✅ STEP 3: Build grepTag from FINAL TAG
           // =========================================================
