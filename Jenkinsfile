@@ -207,7 +207,7 @@ pipeline {
           def runTest = { browserName ->
             bat """
             echo Running on ${browserName}
-            echo TAG: ${dynamicTag}, Workers: ${workers}
+            echo Tag: ${tag}, Workers: ${workers}
             npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
             """
           }
