@@ -65,12 +65,12 @@ pipeline {
   }
 
   // ── Triggers ───────────────────────────────────────────────
-  /* triggers {
+  triggers {
     // Scheduled run every day at midnight
-    cron('0 0 * * *')
+    cron('H/10 * * * *')
     // Uncomment to trigger on SCM push:
-    // pollSCM('H/5 * * * *')
-  } */
+    // pollSCM('H/10 * * * *')
+  }
 
   // ── Stages ─────────────────────────────────────────────────
   stages {
@@ -144,7 +144,7 @@ pipeline {
       }
     }
 
-    stage('Execute Playwright Tests') {
+    /* stage('Execute Playwright Tests') {
       steps {
         script {
 
@@ -171,6 +171,57 @@ pipeline {
           } else {
             runTest(browser)
 
+          }
+        }
+      }
+    } */
+
+    stage('Execute Playwright Tests') {
+      steps {
+        script {
+          // ✅ STEP 0: Read values
+          def browser = env.DYNAMIC_BROWSER
+          def tag     = env.DYNAMIC_TAG
+          def workers = env.DYNAMIC_WORKERS
+          // =========================================================
+          // ✅ STEP 1: Detect Scheduled Build
+          // =========================================================
+          def isScheduledBuild = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause) != null
+          // =========================================================
+          // ✅ STEP 2: Override TAG based on time (ONLY for scheduler)
+          // =========================================================
+          def dynamicTag = tag
+          if (isScheduledBuild) {
+            dynamicTag = "regression"
+            echo "🕒 Scheduled Build Detected → TAG auto set: ${dynamicTag} (every 10 mins)"
+          } else {
+            echo "🧑 Manual Build → TAG used: ${dynamicTag}"
+          }
+          // =========================================================
+          // ✅ STEP 3: Build grepTag from FINAL TAG
+          // =========================================================
+          def grepTag = dynamicTag != 'all' ? "--grep \"@${dynamicTag}\"" : ''
+          // =========================================================
+          // RUN TEST FUNCTION
+          // =========================================================
+          def runTest = { browserName ->
+            bat """
+            echo Running on ${browserName}
+            echo TAG: ${dynamicTag}, Workers: ${workers}
+            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
+            """
+          }
+          // =========================================================
+          // PARALLEL EXECUTION
+          // =========================================================
+          if (browser == 'all') {
+            parallel(
+              "Chromium": { runTest('chromium') },
+              "Firefox" : { runTest('firefox') },
+              "WebKit"  : { runTest('webkit') }
+            )
+          } else {
+            runTest(browser)
           }
         }
       }
