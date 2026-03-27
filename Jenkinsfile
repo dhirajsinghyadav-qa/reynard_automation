@@ -65,12 +65,12 @@ pipeline {
   }
 
   // ── Triggers ───────────────────────────────────────────────
-  triggers {
+  /* triggers {
     // Scheduled run every day at midnight
-    cron('H/5 * * * *')
+    cron('0 0 * * *')
     // Uncomment to trigger on SCM push:
     // pollSCM('H/5 * * * *')
-  }
+  } */
 
   // ── Stages ─────────────────────────────────────────────────
   stages {
