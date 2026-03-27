@@ -39,14 +39,19 @@ async function globalSetup() {
   const logsDir = path.join(process.cwd(), 'logs');
 
   if (!fs.existsSync(logsDir)) {
-    fs.mkdirSync(logsDir);
+    fs.mkdirSync(logsDir, { recursive: true });
   }
 
-  const timestamp = new Date().toISOString().replace(/:/g, '-');
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+  process.env.EXECUTION_RUN_TIMESTAMP = timestamp;
+
   const logFilePath = path.join(logsDir, `test-run-${timestamp}.log`);
 
   // 👇 Save file path globally
   process.env.LOG_FILE_PATH = logFilePath;
+
+  console.log(`🕒 Execution Timestamp: ${timestamp}`);
 }
 
 export default globalSetup;

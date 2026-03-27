@@ -67,7 +67,7 @@ pipeline {
   // ── Triggers ───────────────────────────────────────────────
   triggers {
     // Scheduled run every day at midnight
-    cron('0 0 * * *')
+    cron('H/5 * * * *')
     // Uncomment to trigger on SCM push:
     // pollSCM('H/5 * * * *')
   }
@@ -154,7 +154,6 @@ pipeline {
 
           def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ''
 
-          // ✅ BEST PRACTICE
           def runTest = { browserName ->
             bat """
             echo ======================================
@@ -162,23 +161,17 @@ pipeline {
             echo Tag: ${tag}
             echo Workers: ${workers}
             echo ======================================
-
             npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
             """
           }
 
-          // Parallel execution logic (MAIN FIX)
           if (browser == 'all') {
-
             parallel(
               "Chromium": { runTest('chromium') },
               "Firefox" : { runTest('firefox') },
               "WebKit"  : { runTest('webkit') }
             )
-
           } else {
-
-            // Single browser execution
             runTest(browser)
 
           }

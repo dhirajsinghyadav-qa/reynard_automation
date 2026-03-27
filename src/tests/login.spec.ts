@@ -11,6 +11,9 @@ import { ENV } from '../config/env';
 test.describe('Login Valid and Invalid Scenarios Suite', () => {
   // 🔥 Test Start Log
   test.beforeEach(async ({ page: _page }, testInfo) => {
+    const browserName = testInfo.project.name;
+
+    Logger.setBrowser(browserName);
     Logger.info(testInfo.title, '===== TEST STARTED =====');
   });
 
