@@ -193,7 +193,7 @@ pipeline {
           def dynamicTag = tag
           if (isScheduledBuild) {
             dynamicTag = "regression"
-            echo "🕒 Scheduled Build Detected → TAG auto set: ${dynamicTag} (every 10 mins)"
+            echo "🕒 Cron Build Detected → TAG forced to: ${dynamicTag}"
           } else {
             echo "🧑 Manual Build → TAG used: ${dynamicTag}"
           }
