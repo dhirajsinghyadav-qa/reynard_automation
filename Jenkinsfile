@@ -182,48 +182,25 @@ pipeline {
           def browser = env.DYNAMIC_BROWSER
           def tag     = env.DYNAMIC_TAG
           def workers = env.DYNAMIC_WORKERS
-          def dynamicTag = tag
 
-          def grepTag = dynamicTag != 'all' ? "--grep \"@${dynamicTag}\"" : ""
+          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ""
 
-          def runTests = { projectName ->
-            bat """
-            echo Running project: ${projectName}
-            echo TAG: ${dynamicTag}, Workers: ${workers}
-            npx playwright test ${grepTag} --project=${projectName} --workers=${workers}
-            """
-          }
+          def command = ""
 
-          if (browser == 'all' || browser == 'chromium') {
-            parallel(
-              "Login Tests (chromium)": {
-                runTests('chromium')
-              },
-              "Authenticated Tests (chromium)": {
-                runTests('chromium-auth')
-              }
-            )
+          if (browser == 'all') {
+            command = "npx playwright test ${grepTag} --workers=${workers}"
+          } else if (browser == 'chromium') {
+            command = "npx playwright test ${grepTag} --project=chromium --project=chromium-auth --workers=${workers}"
           } else if (browser == 'firefox') {
-            parallel(
-              "Login Tests (firefox)": {
-                // login-tests project chromium based hai
-                // firefox ke liye login test bhi chromium se chalega
-                runTests('firefox')
-              },
-              "Authenticated Tests (firefox)": {
-                runTests('firefox-auth')
-              }
-            )
+            command = "npx playwright test ${grepTag} --project=Firefox --project=firefox-auth --workers=${workers}"
           } else if (browser == 'webkit') {
-            parallel(
-              "Login Tests": {
-                runTests('webkit')
-              },
-              "Authenticated Tests (webkit)": {
-                runTests('webkit-auth')
-              }
-            )
+            command = "npx playwright test ${grepTag} --project=webkit --project=webkit-auth --workers=${workers}"
           }
+
+          bat """
+          echo Running Playwright Tests
+          ${command}
+          """
         }
       }
     }

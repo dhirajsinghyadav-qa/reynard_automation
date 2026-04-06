@@ -187,37 +187,26 @@ jobs:
             WORKERS="4"
           fi
 
-          # ────────────────────────────────────────────────────────
-          # ✅ BROWSER logic — dono projects always run honge
-          # login-tests  = login.spec.ts (fresh context)
-          # chromium/firefox/webkit = baaki sab specs (storageState)
-          # ────────────────────────────────────────────────────────
-
+          # ✅ PROJECT LOGIC (FIXED)
           if [ "$BROWSER" = "all" ]; then
 
-            echo "Running: login-tests project"
-            npx playwright test $GREP --project=chromium --workers=$WORKERS
-
-            echo "Running: chromium project (authenticated)"
-            npx playwright test $GREP --project=chromium-auth --workers=$WORKERS
+            echo "Running ALL projects"
+            npx playwright test $GREP --workers=$WORKERS
 
           elif [ "$BROWSER" = "chromium" ]; then
 
-            echo "Running: login-tests + chromium"
-            npx playwright test $GREP --project=chromium --workers=$WORKERS
-            npx playwright test $GREP --project=chromium-auth --workers=$WORKERS
+            echo "Running chromium (login + auth)"
+            npx playwright test $GREP --project=chromium --project=chromium-auth --workers=$WORKERS
 
           elif [ "$BROWSER" = "firefox" ]; then
 
-            echo "Running: login-tests + firefox"
-            npx playwright test $GREP --project=firefox --workers=$WORKERS
-            npx playwright test $GREP --project=firefox-auth --workers=$WORKERS
+            echo "Running firefox (login + auth)"
+            npx playwright test $GREP --project=Firefox --project=firefox-auth --workers=$WORKERS
 
           elif [ "$BROWSER" = "webkit" ]; then
 
-            echo "Running: login-tests + webkit"
-            npx playwright test $GREP --project=webkit --workers=$WORKERS
-            npx playwright test $GREP --project=webkit-auth --workers=$WORKERS
+            echo "Running webkit (login + auth)"
+            npx playwright test $GREP --project=webkit --project=webkit-auth --workers=$WORKERS
 
           fi
 
