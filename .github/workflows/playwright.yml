@@ -171,36 +171,26 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
         run: |
-          echo "Resolving dynamic execution..."
+          echo "Starting test execution..."
 
-          # -------------------------------
-          # TAG logic
-          # -------------------------------
+          # TAG
           if [ "$TAG" != "all" ]; then
             GREP="--grep @$TAG"
           else
             GREP=""
           fi
 
-          # -------------------------------
-          # BROWSER logic
-          # -------------------------------
+          # PROJECT LOGIC
           if [ "$BROWSER" = "all" ]; then
             PROJECT=""
-          else
-            PROJECT="--project=$BROWSER"
+          elif [ "$BROWSER" = "chromium" ]; then
+            PROJECT="--project=login-tests --project=chromium"
+          elif [ "$BROWSER" = "firefox" ]; then
+            PROJECT="--project=login-tests --project=firefox"
+          elif [ "$BROWSER" = "webkit" ]; then
+            PROJECT="--project=login-tests --project=webkit"
           fi
 
-          # -------------------------------
-          # WORKERS logic
-          # -------------------------------
-          if [ "$WORKERS" = "all" ]; then
-            WORKERS="4"
-          fi
-
-          # -------------------------------
-          # FINAL COMMAND
-          # -------------------------------
           echo "Running: npx playwright test $GREP $PROJECT --workers=$WORKERS"
 
           npx playwright test $GREP $PROJECT --workers=$WORKERS

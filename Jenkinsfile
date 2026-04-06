@@ -179,51 +179,28 @@ pipeline {
     stage('Execute Playwright Tests') {
       steps {
         script {
-          // ✅ STEP 0: Read values
           def browser = env.DYNAMIC_BROWSER
           def tag     = env.DYNAMIC_TAG
           def workers = env.DYNAMIC_WORKERS
-          // =========================================================
-          // ✅ STEP 1: Detect Scheduled Build
-          // =========================================================
-          // def isScheduledBuild = currentBuild.getBuildCauses().toString().contains('TimerTrigger')
-          // =========================================================
-          // ✅ STEP 2: Override TAG based on time (ONLY for scheduler)
-          // =========================================================
-          /* def dynamicTag = tag
-          if (isScheduledBuild) {
-            dynamicTag = "regression"
-            echo "🕒 Cron Build Detected → TAG forced to: ${dynamicTag}"
-          } else {
-            echo "🧑 Manual Build → TAG used: ${dynamicTag}"
-          } */
-          def dynamicTag = tag
-          // =========================================================
-          // ✅ STEP 3: Build grepTag from FINAL TAG
-          // =========================================================
-          def grepTag = dynamicTag != 'all' ? "--grep \"@${dynamicTag}\"" : ''
-          // =========================================================
-          // RUN TEST FUNCTION
-          // =========================================================
-          def runTest = { browserName ->
-            bat """
-            echo Running on ${browserName}
-            echo TAG: ${dynamicTag}, Workers: ${workers}
-            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
-            """
-          }
-          // =========================================================
-          // PARALLEL EXECUTION
-          // =========================================================
+
+          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ""
+
+          def projectArg = ""
+
           if (browser == 'all') {
-            parallel(
-              "Chromium": { runTest('chromium') },
-              "Firefox" : { runTest('firefox') },
-              "WebKit"  : { runTest('webkit') }
-            )
-          } else {
-            runTest(browser)
+            projectArg = ""  // run all projects
+          } else if (browser == 'chromium') {
+            projectArg = "--project=login-tests --project=chromium"
+          } else if (browser == 'firefox') {
+            projectArg = "--project=login-tests --project=firefox"
+          } else if (browser == 'webkit') {
+            projectArg = "--project=login-tests --project=webkit"
           }
+
+          bat """
+          echo Running Playwright Tests
+          npx playwright test ${grepTag} ${projectArg} --workers=${workers}
+          """
         }
       }
     }
