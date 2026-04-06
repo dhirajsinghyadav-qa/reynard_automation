@@ -1,5 +1,11 @@
 {
-  "browser": "chromium",
-  "tag": "smoke",
+  "_info": {
+    "browser": "all | chromium | firefox | webkit",
+    "tag": "all | smoke | regression",
+    "workers": "number (recommended 1-4 for CI)"
+  },
+
+  "browser": "all",
+  "tag": "all",
   "workers": 4
 }

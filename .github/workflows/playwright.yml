@@ -210,6 +210,102 @@ jobs:
 
           fi
 
+          
+      - name: 'Print Flaky and Failed Test Summary'
+        if: always()
+        run: |
+          echo "## 🧪 Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ ! -f "test-results/results.json" ]; then
+            echo "⚠️ results.json not found" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          TOTAL=$(jq '[.suites[].specs[].tests[]] | length' test-results/results.json 2>/dev/null || echo "0")
+
+          PASSED=$(jq '[.suites[].specs[].tests[] |
+            select(.results[-1].status == "passed")] | length' \
+            test-results/results.json 2>/dev/null || echo "0")
+
+          FAILED=$(jq '[.suites[].specs[].tests[] |
+            select(.results[-1].status == "failed" or .results[-1].status == "timedOut")] | length' \
+            test-results/results.json 2>/dev/null || echo "0")
+
+          FLAKY=$(jq '[.suites[].specs[].tests[] |
+            select(.results[-1].status == "passed" and (.results | length) > 1)] | length' \
+            test-results/results.json 2>/dev/null || echo "0")
+
+          echo "| Total | Passed | Failed | Flaky |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| $TOTAL | $PASSED | $FAILED | $FLAKY |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # ── Flaky tests ──
+          echo "### ⚠️ Flaky Tests (passed after retry)" >> $GITHUB_STEP_SUMMARY
+          jq -r '
+            .suites[].specs[].tests[] |
+            select(.results[-1].status == "passed" and (.results | length) > 1) |
+            "- **\(.title)** — passed on retry \((.results | length) - 1) — first error: \(.results[0].error.message // "unknown")"
+          ' test-results/results.json 2>/dev/null >> $GITHUB_STEP_SUMMARY \
+            || echo "No flaky tests" >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # ── Failed tests ──
+          echo "### ❌ Failed Tests" >> $GITHUB_STEP_SUMMARY
+          jq -r '
+            .suites[].specs[].tests[] |
+            select(.results[-1].status == "failed" or .results[-1].status == "timedOut") |
+            "- **\(.title)** — \(.results[-1].status) after \((.results | length) - 1) retries\n  - Error: \(.results[-1].error.message // "No error message")"
+          ' test-results/results.json 2>/dev/null >> $GITHUB_STEP_SUMMARY \
+            || echo "No failed tests" >> $GITHUB_STEP_SUMMARY
+
+          # ── Console me bhi print karo ──
+          echo "========================================="
+          echo "TEST SUMMARY"
+          echo "Total  : $TOTAL"
+          echo "Passed : $PASSED"
+          echo "Failed : $FAILED"
+          echo "Flaky  : $FLAKY"
+          echo "========================================="
+
+          if [ "$FLAKY" -gt "0" ]; then
+            echo "⚠️ FLAKY TESTS:"
+            jq -r '
+              .suites[].specs[].tests[] |
+              select(.results[-1].status == "passed" and (.results | length) > 1) |
+              "  [FLAKY] \(.title) — retries: \((.results | length) - 1) — first error: \(.results[0].error.message // "unknown")"
+            ' test-results/results.json 2>/dev/null
+          fi
+
+          if [ "$FAILED" -gt "0" ]; then
+            echo "❌ FAILED TESTS:"
+            jq -r '
+              .suites[].specs[].tests[] |
+              select(.results[-1].status == "failed" or .results[-1].status == "timedOut") |
+              "  [FAILED] \(.title)\n  Status : \(.results[-1].status)\n  Retries: \((.results | length) - 1)\n  Error  : \(.results[-1].error.message // "No error")\n  Stack  : \(.results[-1].error.stack // "No stack")"
+            ' test-results/results.json 2>/dev/null
+          fi
+
+      - name: 'Upload Error Logs'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-logs-qa
+          path: logs/errors.log
+          retention-days: 30
+          if-no-files-found: ignore
+
+      - name: 'Upload Failure Screenshots'
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failure-screenshots-qa
+          path: test-results/screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+
       # ================================
       # DEBUG STEP
       # ================================

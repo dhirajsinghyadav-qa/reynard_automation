@@ -17,6 +17,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
   test.beforeEach(async ({ page: _page }, testInfo) => {
     const browserName = testInfo.project.name;
 
+    Logger.setSpecFile(testInfo.file);
     Logger.setBrowser(browserName);
     Logger.info(testInfo.title, '===== TEST STARTED =====');
   });

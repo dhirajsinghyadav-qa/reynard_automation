@@ -279,9 +279,107 @@ pipeline {
 
       // Archive logs
       archiveArtifacts(
-        artifacts: 'logs/*.log, test-results/**/*.png, test-results/**/*.webm',
-        allowEmptyArchive: true
+      artifacts: 'logs/*.log, test-results/**/*.png, test-results/**/*.webm, test-results/results.json, test-results/screenshots/**, test-results/**/*.zip',
+      allowEmptyArchive: true
       )
+
+      // ✅ results.json se flaky + failed summary print karo
+      script {
+        if (fileExists('test-results/results.json')) {
+          try {
+            def results    = readJSON file: 'test-results/results.json'
+            def failedList = []
+            def flakyList  = []
+            def passedCount = 0
+            def totalCount  = 0
+
+            results.suites?.each { suite ->
+              suite.specs?.each { spec ->
+                spec.tests?.each { testCase ->
+                  totalCount++
+                  def allResults = testCase.results ?: []
+                  def lastResult = allResults ? allResults.last() : null
+
+                  if (lastResult) {
+                    // ── FLAKY: last result passed but had retries ──
+                    if (lastResult.status == 'passed' && allResults.size() > 1) {
+                      flakyList << [
+                        title:       testCase.title,
+                        retryCount:  allResults.size() - 1,
+                        firstError:  allResults.first()?.error?.message ?: 'No error info',
+                      ]
+                      passedCount++
+                    }
+                    // ── FAILED: last result failed ──
+                    else if (lastResult.status == 'failed' || lastResult.status == 'timedOut') {
+                      failedList << [
+                        title:   testCase.title,
+                        status:  lastResult.status,
+                        error:   lastResult.error?.message  ?: 'No error message',
+                        stack:   lastResult.error?.stack    ?: 'No stack trace',
+                        retry:   allResults.size() - 1,
+                      ]
+                    }
+                    // ── PASSED ──
+                    else if (lastResult.status == 'passed') {
+                      passedCount++
+                    }
+                  }
+                }
+              }
+            }
+
+            // ─────────────────────────────────────────────────
+            // PRINT SUMMARY
+            // ─────────────────────────────────────────────────
+            echo '========================================='
+            echo '         TEST EXECUTION SUMMARY          '
+            echo '========================================='
+            echo "Total    : ${totalCount}"
+            echo "Passed   : ${passedCount}"
+            echo "Failed   : ${failedList.size()}"
+            echo "Flaky    : ${flakyList.size()}"
+            echo '========================================='
+
+            // ── FLAKY tests ──
+            if (!flakyList.isEmpty()) {
+              echo ''
+              echo '⚠️  FLAKY TESTS DETECTED:'
+              echo '-----------------------------------------'
+              flakyList.each { t ->
+                echo "TEST       : ${t.title}"
+                echo "RETRIES    : ${t.retryCount}"
+                echo "FIRST ERROR: ${t.firstError}"
+                echo '-----------------------------------------'
+              }
+            } else {
+              echo '✅ No flaky tests detected'
+            }
+
+            // ── FAILED tests ──
+            if (!failedList.isEmpty()) {
+              echo ''
+              echo '❌ FAILED TESTS:'
+              echo '-----------------------------------------'
+              failedList.each { t ->
+                echo "TEST   : ${t.title}"
+                echo "STATUS : ${t.status}"
+                echo "RETRIES: ${t.retry}"
+                echo "REASON : ${t.error}"
+                echo "STACK  :\n${t.stack}"
+                echo '-----------------------------------------'
+              }
+            } else {
+              echo '✅ No failed tests'
+            }
+
+          } catch (Exception e) {
+            echo "⚠️ Could not parse results.json: ${e.message}"
+          }
+        } else {
+          echo '⚠️ results.json not found'
+        }
+      }
     }
 
     success {

@@ -28,20 +28,19 @@ export default defineConfig({
   outputDir: 'test-results',
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['list'],
+    ['list', { printSteps: true }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['allure-playwright', { outputFolder: 'allure-results' }],
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: true, }],
+    ['junit', { outputFile: 'test-results/junit-report.xml' }],
+    ['json', { outputFile: 'test-results/results.json' }],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     baseURL: ENV.BASE_URL_QA,
     headless: true,
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'on',
     trace: 'retain-on-failure',
     actionTimeout: 20000,
     navigationTimeout: 30000,
