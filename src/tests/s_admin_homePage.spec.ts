@@ -287,7 +287,7 @@ test.describe('Super Admin Home Page Test Suite', () => {
       await expect(homePage.getSuccessMessage()).toBeVisible();
     }); */
 
-  test('@regression TC_H_M_10 Verify Create Company popup can be closed without submitting', async ({
+  test('@regression TC_H_M_10 - Verify Create Company popup can be closed without submitting', async ({
     page,
   }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);

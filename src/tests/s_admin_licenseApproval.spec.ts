@@ -39,7 +39,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     Logger.flushAll();
   });
 
-  test('@smoke @regression TC_LA_01 — Verify License Approval link is visible and redirects to License Approval page', async ({
+  test('@smoke @regression TC_LA_01 - Verify License Approval link is visible and redirects to License Approval page', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -54,7 +54,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     await expect(page).toHaveURL(/license-approval/i);
   });
 
-  test('@smoke @regression TC_LA_02 — Verify License Approval records visibility with Accept and Reject icons or Data Not Found state', async ({
+  test('@smoke @regression TC_LA_02 - Verify License Approval records visibility with Accept and Reject icons or Data Not Found state', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -94,7 +94,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     }
   });
 
-  test('@regression TC_LA_003 — Verify License Approval table displays correct column headers', async ({
+  test('@regression TC_LA_003 -Verify License Approval table displays correct column headers', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -119,7 +119,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     }
   });
 
-  test('@regression TC_LA_04 — Verify Reject confirmation popup is displayed on clicking Reject icon', async ({
+  test('@regression TC_LA_04 - Verify Reject confirmation popup is displayed on clicking Reject icon', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -145,7 +145,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     Logger.info(testInfo.title, 'Reject confirmation popup verified');
   });
 
-  test('@smoke @regression TC_LA_05 — Verify Super admin can reject the License approval request without providing comment', async ({
+  test('@smoke @regression TC_LA_05 - Verify Super admin can reject the License approval request without providing comment', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -183,7 +183,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     }
   });
 
-  test('@regression TC_LA_06 — Verify Super admin can reject License approval request with rejection reason', async ({
+  test('@regression TC_LA_06 - Verify Super admin can reject License approval request with rejection reason', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -221,7 +221,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     }
   });
 
-  test('@smoke @regression TC_LA_07 — Verify Approve confirmation popup is displayed on clicking Approve icon', async ({
+  test('@smoke @regression TC_LA_07 - Verify Approve confirmation popup is displayed on clicking Approve icon', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -247,7 +247,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     Logger.info(testInfo.title, 'Approve confirmation popup verified');
   });
 
-  test('@smoke @regression TC_LA_08 — Verify Super admin can accept the License approval request', async ({
+  test('@smoke @regression TC_LA_08 - Verify Super admin can accept the License approval request', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);
@@ -287,7 +287,7 @@ test.describe('Super Admin — License Approval Test Suite', () => {
     }
   });
 
-  test('@regression TC_LA_09 — Verify row is removed from table after Accept or Reject action', async ({
+  test('@regression TC_LA_09 - Verify row is removed from table after Accept or Reject action', async ({
     page,
   }, testInfo) => {
     const licenseApprovalPage = new LicenseApprovalPage(page, testInfo.title);

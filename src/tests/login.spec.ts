@@ -31,7 +31,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     Logger.flushAll();
   });
 
-  test('@smoke 1. Verify direct login URL redirects to login page', async ({ page }, testInfo) => {
+  test('@smoke 1 - Verify direct login URL redirects to login page', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -39,7 +39,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(page).toHaveURL(/sign-in/);
   });
 
-  test('@regression 2. Verify Remember Me checkbox is clickable', async ({ page }, testInfo) => {
+  test('@regression 2 - Verify Remember Me checkbox is clickable', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -50,7 +50,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await loginPage.clickRememberMe();
   });
 
-  test('@smoke 3. Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
+  test('@smoke 3 - Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -65,7 +65,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(page).toHaveURL(/home/);
   });
 
-  test('@smoke 4. Verify admin can login with valid credentials and is redirected to Settings page', async ({
+  test('@smoke 4 - Verify admin can login with valid credentials and is redirected to Settings page', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -80,7 +80,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(page).toHaveURL(/setting/);
   });
 
-  test('@smoke 5. Verify Any Custom User can login with valid credentials and is redirected to Settings page', async ({
+  test('@smoke 5 - Verify Any Custom User can login with valid credentials and is redirected to Settings page', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -96,7 +96,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(page).toHaveURL(/setting/);
   });
 
-  test('@regression 6. Verify login fails with unregistered email and valid password', async ({
+  test('@regression 6 - Verify login fails with unregistered email and valid password', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -116,7 +116,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 7. Verify login fails with valid email and incorrect password', async ({
+  test('@regression 7 - Verify login fails with valid email and incorrect password', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -136,7 +136,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 8. Verify validation for invalid email format', async ({ page }, testInfo) => {
+  test('@regression 8 - Verify validation for invalid email format', async ({ page }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
     const data = DataFactory.invalidCredentials('invalidEmailFormat');
     await page.goto(ENV.BASE_URL_QA);
@@ -154,7 +154,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 9. Verify validation message when email field is empty', async ({
+  test('@regression 9 - Verify validation message when email field is empty', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -174,7 +174,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 10. Verify validation message when password field is empty', async ({
+  test('@regression 10 - Verify validation message when password field is empty', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -194,7 +194,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 11. Verify login fails with leading or trailing spaces in credentials', async ({
+  test('@regression 11 - Verify login fails with leading or trailing spaces in credentials', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -214,7 +214,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 12. Verify password validation when password is less than 8 characters', async ({
+  test('@regression 12 - Verify password validation when password is less than 8 characters', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -234,7 +234,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 13. Verify password validation when password exceeds 16 characters', async ({
+  test('@regression 13 - Verify password validation when password exceeds 16 characters', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -254,7 +254,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 14. Verify password validation when password has no uppercase letter', async ({
+  test('@regression 14 - Verify password validation when password has no uppercase letter', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -274,7 +274,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 15. Verify password validation when password has no special character', async ({
+  test('@regression 15 - Verify password validation when password has no special character', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -294,7 +294,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 16. Verify password validation when password has no numeric character', async ({
+  test('@regression 16 - Verify password validation when password has no numeric character', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -314,7 +314,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     // await expect(loginPage.getSettingsHeading()).not.toBeVisible();
   });
 
-  test('@regression 17. Verify the user can try to login using valid credentials who have access only to the mobile application.', async ({
+  test('@regression 17 - Verify the user can try to login using valid credentials who have access only to the mobile application.', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
