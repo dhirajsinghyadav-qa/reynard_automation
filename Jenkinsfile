@@ -182,25 +182,48 @@ pipeline {
           def browser = env.DYNAMIC_BROWSER
           def tag     = env.DYNAMIC_TAG
           def workers = env.DYNAMIC_WORKERS
+          def dynamicTag = tag
 
-          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ""
+          def grepTag = dynamicTag != 'all' ? "--grep \"@${dynamicTag}\"" : ""
 
-          def projectArg = ""
-
-          if (browser == 'all') {
-            projectArg = ""  // run all projects
-          } else if (browser == 'chromium') {
-            projectArg = "--project=login-tests --project=chromium"
-          } else if (browser == 'firefox') {
-            projectArg = "--project=login-tests --project=firefox"
-          } else if (browser == 'webkit') {
-            projectArg = "--project=login-tests --project=webkit"
+          def runTests = { projectName ->
+            bat """
+            echo Running project: ${projectName}
+            echo TAG: ${dynamicTag}, Workers: ${workers}
+            npx playwright test ${grepTag} --project=${projectName} --workers=${workers}
+            """
           }
 
-          bat """
-          echo Running Playwright Tests
-          npx playwright test ${grepTag} ${projectArg} --workers=${workers}
-          """
+          if (browser == 'all' || browser == 'chromium') {
+            parallel(
+              "Login Tests (chromium)": {
+                runTests('chromium')
+              },
+              "Authenticated Tests (chromium)": {
+                runTests('chromium-auth')
+              }
+            )
+          } else if (browser == 'firefox') {
+            parallel(
+              "Login Tests (firefox)": {
+                // login-tests project chromium based hai
+                // firefox ke liye login test bhi chromium se chalega
+                runTests('firefox')
+              },
+              "Authenticated Tests (firefox)": {
+                runTests('firefox-auth')
+              }
+            )
+          } else if (browser == 'webkit') {
+            parallel(
+              "Login Tests": {
+                runTests('webkit')
+              },
+              "Authenticated Tests (webkit)": {
+                runTests('webkit-auth')
+              }
+            )
+          }
         }
       }
     }

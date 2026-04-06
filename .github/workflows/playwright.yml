@@ -171,29 +171,55 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
 
         run: |
-          echo "Starting test execution..."
+          echo "Resolving dynamic execution..."
 
-          # TAG
+          # -------------------------------
+          # TAG logic
+          # -------------------------------
           if [ "$TAG" != "all" ]; then
             GREP="--grep @$TAG"
           else
             GREP=""
           fi
 
-          # PROJECT LOGIC
-          if [ "$BROWSER" = "all" ]; then
-            PROJECT=""
-          elif [ "$BROWSER" = "chromium" ]; then
-            PROJECT="--project=login-tests --project=chromium"
-          elif [ "$BROWSER" = "firefox" ]; then
-            PROJECT="--project=login-tests --project=firefox"
-          elif [ "$BROWSER" = "webkit" ]; then
-            PROJECT="--project=login-tests --project=webkit"
+          # ── WORKERS logic ──
+          if [ "$WORKERS" = "all" ]; then
+            WORKERS="4"
           fi
 
-          echo "Running: npx playwright test $GREP $PROJECT --workers=$WORKERS"
+          # ────────────────────────────────────────────────────────
+          # ✅ BROWSER logic — dono projects always run honge
+          # login-tests  = login.spec.ts (fresh context)
+          # chromium/firefox/webkit = baaki sab specs (storageState)
+          # ────────────────────────────────────────────────────────
 
-          npx playwright test $GREP $PROJECT --workers=$WORKERS
+          if [ "$BROWSER" = "all" ]; then
+
+            echo "Running: login-tests project"
+            npx playwright test $GREP --project=chromium --workers=$WORKERS
+
+            echo "Running: chromium project (authenticated)"
+            npx playwright test $GREP --project=chromium-auth --workers=$WORKERS
+
+          elif [ "$BROWSER" = "chromium" ]; then
+
+            echo "Running: login-tests + chromium"
+            npx playwright test $GREP --project=chromium --workers=$WORKERS
+            npx playwright test $GREP --project=chromium-auth --workers=$WORKERS
+
+          elif [ "$BROWSER" = "firefox" ]; then
+
+            echo "Running: login-tests + firefox"
+            npx playwright test $GREP --project=firefox --workers=$WORKERS
+            npx playwright test $GREP --project=firefox-auth --workers=$WORKERS
+
+          elif [ "$BROWSER" = "webkit" ]; then
+
+            echo "Running: login-tests + webkit"
+            npx playwright test $GREP --project=webkit --workers=$WORKERS
+            npx playwright test $GREP --project=webkit-auth --workers=$WORKERS
+
+          fi
 
       # ================================
       # DEBUG STEP

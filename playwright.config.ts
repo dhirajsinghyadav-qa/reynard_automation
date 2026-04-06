@@ -75,15 +75,14 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     }, */
 
-    // ──────────────────────────────────────────────────────────
     // ✅ LOGIN TESTS — Fresh context (NO storageState)
-    // ──────────────────────────────────────────────────────────
+
     {
       name: 'chromium',
       testMatch: '**/login.spec.ts',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: undefined, // 🔥 Fresh login — no saved session
+        storageState: undefined,
       },
     },
 
@@ -93,15 +92,15 @@ export default defineConfig({
       fullyParallel: false,
       use: {
         ...devices['Desktop Firefox'],
-        storageState: undefined, // Fresh login — no saved session
+        storageState: undefined,
         launchOptions: {
-          slowMo: 300, // Slow down actions by 300ms to improve stability in Firefox
+          slowMo: 300,
           firefoxUserPrefs: {
             'toolkit.cosmeticAnimations.enabled': false,
           },
         },
       },
-      workers: 1, // Limit Firefox to 1 worker due to potential instability in parallel execution
+      workers: 1,
     },
 
     {
@@ -109,13 +108,12 @@ export default defineConfig({
       testMatch: '**/login.spec.ts',
       use: {
         ...devices['Desktop Safari'],
-        storageState: undefined, // 🔥 Fresh login — no saved session
+        storageState: undefined,
       },
     },
 
-    // ──────────────────────────────────────────────────────────
     // ✅ AUTHENTICATED TESTS — storageState inject (All Modules)
-    // ──────────────────────────────────────────────────────────
+
     {
       name: 'chromium-auth',
       testIgnore: '**/login.spec.ts', // login.spec skip here

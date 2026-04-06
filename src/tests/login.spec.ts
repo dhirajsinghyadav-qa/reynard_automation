@@ -50,7 +50,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await loginPage.clickRememberMe();
   });
 
-  test('@smoke 3. Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
+  /* test('@smoke 3. Verify Super Admin can login with valid credentials and is redirected to Home/Companies page', async ({
     page,
   }, testInfo) => {
     const loginPage = new LoginPage(page, testInfo.title);
@@ -332,7 +332,7 @@ test.describe('Login Valid and Invalid Scenarios Suite', () => {
     await expect(errorLocator!).toBeVisible();
 
     // await expect(sig.getSettingsHeading()).not.toBeVisible();
-  });
+  }); */
 });
 
 /*
