@@ -14,10 +14,10 @@ if (!fs.existsSync(logsDir)) {
 
 // ── In-memory log store ──
 type LogEntry = {
-  level:    'info' | 'warn' | 'error';
+  level: 'info' | 'warn' | 'error';
   testName: string;
-  message:  string;
-  time:     string;
+  message: string;
+  time: string;
 };
 
 // ── Per spec+browser key — log buffer ──
@@ -27,10 +27,10 @@ const logBuffer: Map<string, LogEntry[]> = new Map();
 const loggerCache: Map<string, winston.Logger> = new Map();
 
 // ── Global state ──
-let currentBrowser  = 'unknown';
+let currentBrowser = 'unknown';
 let currentSpecFile = 'unknown';
-let executionTimestamp = process.env.EXECUTION_RUN_TIMESTAMP
-  ?? new Date().toISOString().replace(/[:.]/g, '-');
+const executionTimestamp =
+  process.env.EXECUTION_RUN_TIMESTAMP ?? new Date().toISOString().replace(/[:.]/g, '-');
 
 // ─────────────────────────────────────────────────────────────
 // Winston logger factory — per spec + browser
@@ -43,10 +43,10 @@ function getOrCreateLogger(specFile: string, browser: string): winston.Logger {
   }
 
   // ── Log file name: specFile_browser_timestamp.log ──
-  const sanitizedSpec    = specFile.replace(/[^a-z0-9_]/gi, '_');
+  const sanitizedSpec = specFile.replace(/[^a-z0-9_]/gi, '_');
   const sanitizedBrowser = browser.replace(/[^a-z0-9_]/gi, '_');
-  const logFileName      = `${sanitizedSpec}__${sanitizedBrowser}__${executionTimestamp}.log`;
-  const logFilePath      = path.join(logsDir, logFileName);
+  const logFileName = `${sanitizedSpec}__${sanitizedBrowser}__${executionTimestamp}.log`;
+  const logFilePath = path.join(logsDir, logFileName);
 
   const logFormat = winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DDTHH:mm:ss.SSSZ' }),
@@ -62,7 +62,7 @@ function getOrCreateLogger(specFile: string, browser: string): winston.Logger {
       // ── File transport — spec specific ──
       new winston.transports.File({
         filename: logFilePath,
-        options:  { flags: 'a' },
+        options: { flags: 'a' },
       }),
       // ── Error only file — per spec ──
       new winston.transports.File({
@@ -70,15 +70,12 @@ function getOrCreateLogger(specFile: string, browser: string): winston.Logger {
           logsDir,
           `${sanitizedSpec}__${sanitizedBrowser}__${executionTimestamp}__errors.log`,
         ),
-        level:   'error',
+        level: 'error',
         options: { flags: 'a' },
       }),
       // ── Console ──
       new winston.transports.Console({
-        format: winston.format.combine(
-          winston.format.colorize(),
-          logFormat,
-        ),
+        format: winston.format.combine(winston.format.colorize(), logFormat),
       }),
     ],
   });
@@ -98,7 +95,6 @@ function getBufferKey(specFile: string, browser: string): string {
 // PUBLIC LOGGER API
 // ─────────────────────────────────────────────────────────────
 export const Logger = {
-
   // ── Browser set karo — beforeEach se ──
   setBrowser(browser: string) {
     currentBrowser = browser;
@@ -110,9 +106,9 @@ export const Logger = {
   },
 
   info(testName: string, message: string) {
-    const key   = getBufferKey(currentSpecFile, currentBrowser);
+    const key = getBufferKey(currentSpecFile, currentBrowser);
     const entry: LogEntry = {
-      level:    'info',
+      level: 'info',
       testName,
       message,
       time: new Date().toISOString(),
@@ -122,9 +118,9 @@ export const Logger = {
   },
 
   warn(testName: string, message: string) {
-    const key   = getBufferKey(currentSpecFile, currentBrowser);
+    const key = getBufferKey(currentSpecFile, currentBrowser);
     const entry: LogEntry = {
-      level:    'warn',
+      level: 'warn',
       testName,
       message,
       time: new Date().toISOString(),
@@ -134,9 +130,9 @@ export const Logger = {
   },
 
   error(testName: string, message: string) {
-    const key   = getBufferKey(currentSpecFile, currentBrowser);
+    const key = getBufferKey(currentSpecFile, currentBrowser);
     const entry: LogEntry = {
-      level:    'error',
+      level: 'error',
       testName,
       message,
       time: new Date().toISOString(),
@@ -149,8 +145,8 @@ export const Logger = {
   flushAll() {
     for (const [bufferKey, entries] of logBuffer.entries()) {
       // ── key = specFile__browser ──
-      const parts   = bufferKey.split('__');
-      const spec    = parts[0] ?? 'unknown';
+      const parts = bufferKey.split('__');
+      const spec = parts[0] ?? 'unknown';
       const browser = parts[1] ?? 'unknown';
 
       const wLogger = getOrCreateLogger(spec, browser);
@@ -164,9 +160,7 @@ export const Logger = {
 
       for (const [testName, testEntries] of grouped.entries()) {
         // ── Test header ──
-        wLogger.info(
-          `\n${'='.repeat(10)} ${testName} (${browser}) ${'='.repeat(10)}`,
-        );
+        wLogger.info(`\n${'='.repeat(10)} ${testName} (${browser}) ${'='.repeat(10)}`);
 
         for (const e of testEntries) {
           if (e.level === 'error') {

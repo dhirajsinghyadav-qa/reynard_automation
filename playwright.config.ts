@@ -30,7 +30,7 @@ export default defineConfig({
   reporter: [
     ['list', { printSteps: true }],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
-    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: true, }],
+    ['allure-playwright', { outputFolder: 'allure-results', detail: true, suiteTitle: true }],
     ['junit', { outputFile: 'test-results/junit-report.xml' }],
     ['json', { outputFile: 'test-results/results.json' }],
   ],

@@ -40,11 +40,10 @@ import fs from 'fs';
 // ✅ Custom fixture — storageState aware context
 export const test = base.extend({
   page: async ({ browser }, use, testInfo) => {
-
     const flakyFilePath = path.join(
       process.cwd(),
       'test-results',
-      `flaky-${testInfo.title.replace(/[^a-z0-9]/gi, '_')}.json`
+      `flaky-${testInfo.title.replace(/[^a-z0-9]/gi, '_')}.json`,
     );
     const isLoginTest = testInfo.file.includes('login.spec');
 
@@ -71,10 +70,10 @@ export const test = base.extend({
     // ─────────────────────────────────────────────────────────
     // ✅ After test — failure + FLAKY info capture
     // ─────────────────────────────────────────────────────────
-    const isFailed   = testInfo.status === 'failed';
+    const isFailed = testInfo.status === 'failed';
     const isTimedOut = testInfo.status === 'timedOut';
-    const isPassed   = testInfo.status === 'passed';
-    const isFlaky    = isPassed && testInfo.retry > 0;
+    const isPassed = testInfo.status === 'passed';
+    const isFlaky = isPassed && testInfo.retry > 0;
 
     // ── Retry attempt log ──
     if ((isFailed || isTimedOut) && testInfo.retry === 0) {
@@ -106,34 +105,22 @@ export const test = base.extend({
 
           Logger.error(
             testInfo.title,
-            `🔁 [FLAKY TEST] Passed on retry ${testInfo.retry}/${testInfo.project.retries}`
+            `🔁 [FLAKY TEST] Passed on retry ${testInfo.retry}/${testInfo.project.retries}`,
           );
 
-          Logger.error(
-            testInfo.title,
-            `❌ [FIRST FAILURE REASON] ${data.error}`
-          );
+          Logger.error(testInfo.title, `❌ [FIRST FAILURE REASON] ${data.error}`);
 
           if (data.stack) {
-            Logger.error(
-              testInfo.title,
-              `📌 [STACK TRACE]\n${data.stack}`
-            );
+            Logger.error(testInfo.title, `📌 [STACK TRACE]\n${data.stack}`);
           }
 
           // cleanup after use
           fs.unlinkSync(flakyFilePath);
         } else {
-          Logger.error(
-            testInfo.title,
-            `⚠️ Flaky detected but no first failure data found`
-          );
+          Logger.error(testInfo.title, '⚠️ Flaky detected but no first failure data found');
         }
       } catch {
-        Logger.error(
-          testInfo.title,
-          `⚠️ Error reading flaky log file`
-        );
+        Logger.error(testInfo.title, '⚠️ Error reading flaky log file');
       }
     }
 
