@@ -20,12 +20,12 @@
     ],
     "@typescript-eslint/explicit-function-return-types": "off",
     "@typescript-eslint/no-explicit-any": "warn",
-    "no-console": [
+    "no-console": "off", /* [
       "warn",
       {
         "allow": ["warn", "error"]
       }
-    ],
+    ], */
     "no-var": "error",
     "prefer-const": "error",
     "semi": ["error", "always"],
