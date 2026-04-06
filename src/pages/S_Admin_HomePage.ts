@@ -184,14 +184,18 @@ export class HomePage {
       .first();
 
     // Profile Details Panel
-    this.profileDetailsPanel = page.locator('[class*="MuiBox"], [class*="MuiGrid"]')
+    this.profileDetailsPanel = page
+      .locator('[class*="MuiBox"], [class*="MuiGrid"]')
       .filter({ has: page.getByRole('heading', { name: 'Admin Details' }) })
       .first();
     this.adminDetailsHeading = page.getByRole('heading', { name: 'Admin Details' });
     this.adminDetailsText = page.locator('.MuiBox-root.css-11b450n');
 
     // ── Profile Info ──
-    this.profileAdminName = page.locator('p').filter({ hasText: /^[A-Za-z]/ }).first()
+    this.profileAdminName = page
+      .locator('p')
+      .filter({ hasText: /^[A-Za-z]/ })
+      .first();
     this.profileAdminEmail = page.locator('p').filter({ hasText: /@/ }).first();
 
     this.switchUserIcon = page.getByRole('button', { name: 'edit report type' });
@@ -1132,10 +1136,7 @@ export class HomePage {
   async waitForProfileAdminEmailVisible(): Promise<void> {
     try {
       // ── Profile page pe email paragraph me hoti hai ──
-      const emailLocator = this.page
-        .locator('p')
-        .filter({ hasText: /@/ })
-        .first();
+      const emailLocator = this.page.locator('p').filter({ hasText: /@/ }).first();
 
       await emailLocator.waitFor({ state: 'visible', timeout: 20000 });
       Logger.info(this.testName, 'Profile admin email is visible');
@@ -1162,10 +1163,9 @@ export class HomePage {
       Logger.info(this.testName, `Profile → Panel Full Data: "${panelText?.trim()}"`);
 
       // ── Email extract karo dynamically ──
-      const allTexts  = await this.profileDetailsPanel.locator('p, span, div').allTextContents();
-      const emailText = allTexts.find(t => t.includes('@')) ?? 'email not found';
+      const allTexts = await this.profileDetailsPanel.locator('p, span, div').allTextContents();
+      const emailText = allTexts.find((t) => t.includes('@')) ?? 'email not found';
       Logger.info(this.testName, `Profile → Admin Email: "${emailText.trim()}"`);
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -1190,12 +1190,15 @@ export class HomePage {
       await this.adminDetailsHeading.waitFor({ state: 'visible' });
 
       // ── Name — first paragraph ──
-      const nameLocator = this.page.locator('p').filter({ hasText: /^[A-Za-z]/ }).first();
-      const name        = ((await nameLocator.textContent()) ?? '').trim();
+      const nameLocator = this.page
+        .locator('p')
+        .filter({ hasText: /^[A-Za-z]/ })
+        .first();
+      const name = ((await nameLocator.textContent()) ?? '').trim();
 
       // ── Email — paragraph with @ ──
       const emailLocator = this.page.locator('p').filter({ hasText: /@/ }).first();
-      const email        = ((await emailLocator.textContent()) ?? '').trim();
+      const email = ((await emailLocator.textContent()) ?? '').trim();
 
       // ── Full page text ──
       const panelText = ((await this.page.locator('body').textContent()) ?? '').trim();

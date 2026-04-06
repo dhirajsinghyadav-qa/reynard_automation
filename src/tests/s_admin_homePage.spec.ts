@@ -35,7 +35,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     Logger.flushAll();
   });
 
-  test( '@smoke @regression TC_H_M_01 - Verify the click event of the "Home" menu', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_01 - Verify the click event of the "Home" menu', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -62,7 +64,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getCreateCompanyButton()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_02 - Verify Company table displays correct columns on Home page', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_02 - Verify Company table displays correct columns on Home page', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -94,32 +98,35 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getTableHeaderAction()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_03 - Verify Home menu active state and Create Company button is enabled',
-    async ({ page }, testInfo) => {
-      const homePage = new HomePage(page, testInfo.title);
+  test('@regression TC_H_M_03 - Verify Home menu active state and Create Company button is enabled', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
 
-      await page.goto(ENV.BASE_URL_QA);
+    await page.goto(ENV.BASE_URL_QA);
 
-      // ── Step 1: Verify Home page loaded ──
-      await homePage.verifyHomePageLoaded();
+    // ── Step 1: Verify Home page loaded ──
+    await homePage.verifyHomePageLoaded();
 
-      // ── Step 2: Click Home ──
-      await homePage.clickHomeMenuLink();
+    // ── Step 2: Click Home ──
+    await homePage.clickHomeMenuLink();
 
-      // ── Step 3: Assert Home link visible (active state) ──
-      await expect(homePage.getHomeMenuLink()).toBeVisible();
+    // ── Step 3: Assert Home link visible (active state) ──
+    await expect(homePage.getHomeMenuLink()).toBeVisible();
 
-      // ── Step 4: Assert Create Company button visible ──
-      await homePage.waitForCreateCompanyButtonVisible();
-      await expect(homePage.getCreateCompanyButton()).toBeVisible();
+    // ── Step 4: Assert Create Company button visible ──
+    await homePage.waitForCreateCompanyButtonVisible();
+    await expect(homePage.getCreateCompanyButton()).toBeVisible();
 
-      // ── Step 5: Assert Create Company button clickable ──
-      await homePage.clickCreateCompanyButton();
-      await homePage.waitForPopupVisible();
-      await expect(homePage.getNewCompanyPopup()).toBeVisible();
-    });
+    // ── Step 5: Assert Create Company button clickable ──
+    await homePage.clickCreateCompanyButton();
+    await homePage.waitForPopupVisible();
+    await expect(homePage.getNewCompanyPopup()).toBeVisible();
+  });
 
-  test( '@regression TC_H_M_04 - Verify Home page session persistence on browser refresh', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_04 - Verify Home page session persistence on browser refresh', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -148,7 +155,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(page).not.toHaveURL(/sign-in/);
   });
 
-  test( '@smoke @regression TC_H_M_05 - Verify New Company popup opens on clicking Company button', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_05 - Verify New Company popup opens on clicking Company button', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -160,7 +169,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getNewCompanyPopup()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_06 - Verify all mandatory fields are present in New Company popup', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_06 - Verify all mandatory fields are present in New Company popup', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -169,21 +180,50 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await homePage.clickCreateCompanyButton();
     await homePage.waitForPopupVisible();
 
-    await expect(await homePage.verifyFieldVisible(homePage.getUsualFirstNameInput(), 'Usual First Name')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getFirstNamePassportInput(), 'First Name Passport')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getLastNamePassportInput(), 'Last Name Passport')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getEmailInput(), 'Email')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getPasswordInput(), 'Password')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getCountryButton(), 'Country')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getCompanyNameInput(), 'Company Name')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getCompanyLogoButton(), 'Company Logo')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getSelectLicenseButton(), 'Select License')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getAddressInput(), 'Address')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getContactNumberInput(), 'Contact Number')).toBeVisible();
-    await expect(await homePage.verifyFieldVisible(homePage.getSubmitButton(), 'Submit Button')).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getUsualFirstNameInput(), 'Usual First Name'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(
+        homePage.getFirstNamePassportInput(),
+        'First Name Passport',
+      ),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getLastNamePassportInput(), 'Last Name Passport'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getEmailInput(), 'Email'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getPasswordInput(), 'Password'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getCountryButton(), 'Country'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getCompanyNameInput(), 'Company Name'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getCompanyLogoButton(), 'Company Logo'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getSelectLicenseButton(), 'Select License'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getAddressInput(), 'Address'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getContactNumberInput(), 'Contact Number'),
+    ).toBeVisible();
+    await expect(
+      await homePage.verifyFieldVisible(homePage.getSubmitButton(), 'Submit Button'),
+    ).toBeVisible();
   });
 
-  test( '@regression TC_H_M_07 - Verify form fields are empty when popup opens fresh', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_07 - Verify form fields are empty when popup opens fresh', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -247,7 +287,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
       await expect(homePage.getSuccessMessage()).toBeVisible();
     }); */
 
-  test( '@regression TC_H_M_10 Verify Create Company popup can be closed without submitting', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_10 Verify Create Company popup can be closed without submitting', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -263,7 +305,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     // Logger.info(testInfo.title, 'Popup closed on cancel — no data saved');
   });
 
-  test( '@regression TC_H_M_11 - Verify company creation fails when all mandatory fields are empty', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_11 - Verify company creation fails when all mandatory fields are empty', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -288,7 +332,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await homePage.logMandatoryFieldValidationMessages();
   });
 
-  test( '@regression TC_H_M_12 - Verify validation error for invalid Email format', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_12 - Verify validation error for invalid Email format', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     const data = DataFactory.companyData('invalidEmailFormat');
@@ -309,7 +355,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     Logger.info(testInfo.title, `Validation shown for invalid email: ${data.email}`);
   });
 
-  test( '@regression TC_H_M_13 - Verify Contact Number does not accept alphabets', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_13 - Verify Contact Number does not accept alphabets', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     const data = DataFactory.companyData('invalidContactAlpha');
@@ -353,7 +401,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
       expect(value).not.toMatch(/[a-zA-Z]/);
     }); */
 
-  test( '@regression TC_H_M_15 - Verify Company Logo field rejects invalid file format', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_15 - Verify Company Logo field rejects invalid file format', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     const data = DataFactory.companyData('invalidLogoFormat');
@@ -372,7 +422,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     Logger.info(testInfo.title, `Invalid logo format rejected: ${data.description}`);
   });
 
-  test( '@regression TC_H_M_16 - Verify Eye icon visible for each company row in table', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_16 - Verify Eye icon visible for each company row in table', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -385,7 +437,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getEyeIconButton()).toBeVisible();
   });
 
-  test( '@smoke @regression TC_H_M_17 - Verify click event of Eye icon and profile details page loads after Eye icon click', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_17 - Verify click event of Eye icon and profile details page loads after Eye icon click', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -406,7 +460,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getAdminDetailsHeading()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_18 - Verify Admin Details heading visible on profile page', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_18 - Verify Admin Details heading visible on profile page', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -419,7 +475,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getAdminDetailsHeading()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_19 - Verify profile details panel shows correct admin information', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_19 - Verify profile details panel shows correct admin information', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -436,7 +494,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     Logger.info(testInfo.title, 'Profile panel shows correct admin name and email');
   });
 
-  test( '@regression TC_H_M_20 - Verify Switch User icon is visible in company table row', async ({ page }, testInfo) => {
+  test('@regression TC_H_M_20 - Verify Switch User icon is visible in company table row', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -449,7 +509,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getSwitchUserIconByRow('Tim Naber')).toBeVisible();
   });
 
-  test( '@smoke @regression TC_H_M_21 - Verify click event of Switch User icon and admin is redirected to Settings page after Switch User', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_21 - Verify click event of Switch User icon and admin is redirected to Settings page after Switch User', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
     const settingPage = new SettingsPage(page, testInfo.title);
 
@@ -470,9 +532,10 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(settingPage.getSettingsHeading()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_22 - Verify switched user can access settings and sidebar', async ({ page }, testInfo) => {
-
-    const homePage       = new HomePage(page, testInfo.title);
+  test('@regression TC_H_M_22 - Verify switched user can access settings and sidebar', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
     const settingPage = new SettingsPage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -497,7 +560,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(settingPage.getSettingsMenu()).toBeVisible();
   });
 
-  test( '@smoke @regression TC_H_M_23 - Verify click event of Switch To Super Admin icon and redirection to Home/Companies page', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_23 - Verify click event of Switch To Super Admin icon and redirection to Home/Companies page', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -513,7 +578,9 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(page).toHaveURL(/home|company/i);
   });
 
-  test( '@smoke @regression TC_H_M_24 - Verify Super Admin can access all modules after switch back', async ({ page }, testInfo) => {
+  test('@smoke @regression TC_H_M_24 - Verify Super Admin can access all modules after switch back', async ({
+    page,
+  }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
@@ -530,8 +597,10 @@ test.describe('Super Admin Home Page Test Suite', () => {
     await expect(homePage.getLicenseApprovalLink()).toBeVisible();
   });
 
-  test( '@regression TC_H_M_25 - Verify Super Admin session is correctly restored', async ({ page }, testInfo) => {
-    const homePage       = new HomePage(page, testInfo.title);
+  test('@regression TC_H_M_25 - Verify Super Admin session is correctly restored', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
 
     await page.goto(ENV.BASE_URL_QA);
 
