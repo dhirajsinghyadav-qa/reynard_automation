@@ -29,7 +29,9 @@ export const test = base.extend({
     const isLoginTest = testInfo.file.includes('login.spec');
 
     const contextOptions = isLoginTest
-      ? { permissions: [] }
+      ? {
+          permissions: [], // 🔥 block notification popup
+        }
       : {
           permissions: [],
           // ✅ storageState inject — agar file exist kare to
