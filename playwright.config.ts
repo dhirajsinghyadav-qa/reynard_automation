@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import { STORAGE_STATE_PATH } from './global-setup';
 // Import ENV after environment variables are set by workflow
 import { ENV } from './src/config/env';
 
@@ -45,22 +45,13 @@ export default defineConfig({
     trace: 'retain-on-failure',
     actionTimeout: 20000,
     navigationTimeout: 30000,
-    /* permissions: [],
-
-    // IMPORTANT: launch options for firefox
-    launchOptions: {
-      firefoxUserPrefs: {
-        'dom.webnotifications.enabled': true,
-        'permissions.default.desktop-notification': 2,
-      },
-    }, */
   },
 
   globalSetup: require.resolve('./global-setup'),
 
   /* Configure projects for major browsers */
   projects: [
-    {
+    /* {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
@@ -82,6 +73,85 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+    }, */
+
+    // ──────────────────────────────────────────────────────────
+    // ✅ LOGIN TESTS — Fresh context (NO storageState)
+    // ──────────────────────────────────────────────────────────
+    {
+      name: 'chromium',
+      testMatch: '**/login.spec.ts',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: undefined, // 🔥 Fresh login — no saved session
+      },
+    },
+
+    {
+      name: 'Firefox',
+      testMatch: '**/login.spec.ts',
+      fullyParallel: false,
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: undefined, // Fresh login — no saved session
+        launchOptions: {
+          slowMo: 300, // Slow down actions by 300ms to improve stability in Firefox
+          firefoxUserPrefs: {
+            'toolkit.cosmeticAnimations.enabled': false,
+          },
+        },
+      },
+      workers: 1, // Limit Firefox to 1 worker due to potential instability in parallel execution
+    },
+
+    {
+      name: 'webkit',
+      testMatch: '**/login.spec.ts',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: undefined, // 🔥 Fresh login — no saved session
+      },
+    },
+
+    // ──────────────────────────────────────────────────────────
+    // ✅ AUTHENTICATED TESTS — storageState inject (All Modules)
+    // ──────────────────────────────────────────────────────────
+    {
+      name: 'chromium-auth',
+      testIgnore: '**/login.spec.ts', // login.spec skip here
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: STORAGE_STATE_PATH, // 🔑 Auto logged-in
+        launchOptions: {
+          slowMo: 500,
+        },
+      },
+    },
+
+    {
+      name: 'firefox-auth',
+      testIgnore: '**/login.spec.ts',
+      fullyParallel: false,
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: STORAGE_STATE_PATH,
+        launchOptions: {
+          slowMo: 500,
+        },
+      },
+      workers: 1,
+    },
+
+    {
+      name: 'webkit-auth',
+      testIgnore: '**/login.spec.ts',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: STORAGE_STATE_PATH,
+        launchOptions: {
+          slowMo: 500,
+        },
+      },
     },
 
     /* Test against mobile viewports. */

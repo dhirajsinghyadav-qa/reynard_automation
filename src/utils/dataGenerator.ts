@@ -15,56 +15,26 @@ export interface Credentials {
   description?: string;
 }
 
-export interface TestUser {
-  id: string;
+// ============================================================================
+// COMPANY DATA TYPES
+// ============================================================================
+
+export interface CompanyData {
+  usualFirstName: string;
+  firstNamePassport: string;
+  lastNamePassport: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  role: 'admin' | 'user' | 'viewer';
-  isActive: boolean;
+  country: string;
+  companyName: string;
+  logoPath: string;
+  address: string;
+  contactCountry: string;
+  contactNumber: string;
+  emergencyContactCountry?: string;
+  emergencyContactNumber?: string;
+  description?: string;
 }
-
-// ============================================================================
-// ROLE BASED USER FACTORY
-// ============================================================================
-
-export const testUserFactory = (
-  role: 'admin' | 'user' | 'viewer' = 'user',
-  id: string = '1',
-): TestUser => {
-  const users: { [key: string]: TestUser } = {
-    admin: {
-      id,
-      email: process.env.ADMIN_EMAIL || 'admin@mailinator.com',
-      password: process.env.ADMIN_PASSWORD || 'Admin@2025',
-      firstName: 'Admin',
-      lastName: 'User',
-      role: 'admin',
-      isActive: true,
-    },
-    user: {
-      id,
-      email: process.env.VALID_USER_EMAIL || 'user@mailinator.com',
-      password: process.env.VALID_USER_PASSWORD || 'User@2025',
-      firstName: 'Regular',
-      lastName: 'User',
-      role: 'user',
-      isActive: true,
-    },
-    viewer: {
-      id,
-      email: `viewer${id}@mailinator.com`,
-      password: 'Viewer@2025',
-      firstName: 'Viewer',
-      lastName: 'User',
-      role: 'viewer',
-      isActive: true,
-    },
-  };
-
-  return users[role];
-};
 
 // ============================================================================
 // VALID CREDENTIALS FACTORY (ROLE BASED)
@@ -195,57 +165,120 @@ export const invalidCredentialsFactory = (type: string = 'default'): Credentials
 };
 
 // ============================================================================
-// BULK DATA FACTORY
+// COMPANY DATA FACTORY
 // ============================================================================
 
-export const bulkTestUsersFactory = (count: number = 5): TestUser[] => {
-  const users: TestUser[] = [];
-  const roles: Array<'admin' | 'user' | 'viewer'> = ['admin', 'user', 'viewer'];
-
-  for (let i = 1; i <= count; i++) {
-    const roleIndex = (i - 1) % roles.length;
-    users.push(testUserFactory(roles[roleIndex], `user-${i}`));
-  }
-
-  return users;
+const TEST_FILES = {
+  VALID_IMAGE: 'test-data/files/KiwiQA_LOGO.png',
+  INVALID_PDF: 'test-data/files/test-file.pdf',
 };
 
-// ============================================================================
-// SCENARIO DATA FACTORIES
-// ============================================================================
+const getUniqueSuffix = () => Date.now() + Math.floor(Math.random() * 1000);
+export const companyDataFactory = (type: string = 'validWithAllFields'): CompanyData => {
+  const unique = getUniqueSuffix();
+  const scenarios: { [key: string]: CompanyData } = {
+    // ── TC_H_M_08 — All fields including optional ──
+    validWithAllFields: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: `org.${unique}allafields@mailinator.com`,
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: `KiwiQA AllFields ${unique}`,
+      logoPath: TEST_FILES.VALID_IMAGE,
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: '+91 87874-56214',
+      emergencyContactCountry: 'India+',
+      emergencyContactNumber: '+91 98985-63214',
+      description: 'Valid company data with all fields including optional',
+    },
 
-export const loginTestScenariosFactory = (): {
-  name: string;
-  credentials: Credentials;
-  expectedResult: 'success' | 'failure';
-}[] => {
-  return [
-    {
-      name: 'Valid Admin Login',
-      credentials: validCredentialsFactory('ADMIN'),
-      expectedResult: 'success',
+    // ── TC_H_M_09 — Only mandatory fields ──
+    validMandatoryOnly: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: 'org.mandatory@mailinator.com',
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: 'KiwiQA Mandatory',
+      logoPath: TEST_FILES.VALID_IMAGE,
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: '+91 87874-56214',
+      description: 'Valid company data with mandatory fields only',
     },
-    {
-      name: 'Invalid Credentials',
-      credentials: invalidCredentialsFactory('wrongPassword'),
-      expectedResult: 'failure',
+
+    // ── TC_H_M_012 — Invalid email format ──
+    invalidEmailFormat: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: 'org@mai',
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: 'KiwiQA InvalidEmail',
+      logoPath: TEST_FILES.VALID_IMAGE,
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: '+91 87874-56214',
+      description: 'Invalid email format',
     },
-    {
-      name: 'Empty Email',
-      credentials: invalidCredentialsFactory('emptyEmail'),
-      expectedResult: 'failure',
+
+    // ── TC_H_M_013 — Invalid contact number (alphabets) ──
+    invalidContactAlpha: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: 'org.invalidcontact@mailinator.com',
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: 'KiwiQA InvalidContact',
+      logoPath: TEST_FILES.VALID_IMAGE,
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: 'abcdefghij',
+      description: 'Try to enter Alphabets in contact number',
     },
-    {
-      name: 'Empty Password',
-      credentials: invalidCredentialsFactory('emptyPassword'),
-      expectedResult: 'failure',
+
+    // ── TC_H_M_014 — Invalid emergency contact (alphabets) ──
+    invalidEmergencyAlpha: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: 'org.invalidemergency@mailinator.com',
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: 'KiwiQA InvalidEmergency',
+      logoPath: TEST_FILES.VALID_IMAGE,
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: '+91 87874-56214',
+      emergencyContactCountry: 'India+',
+      emergencyContactNumber: 'abcdefghij',
+      description: 'Try to enter Alphabets in emergency contact number',
     },
-    {
-      name: 'Special Characters in Password',
-      credentials: invalidCredentialsFactory('specialCharacters'),
-      expectedResult: 'success', // If password allows special chars
+
+    // ── TC_H_M_015 — Invalid logo format ──
+    invalidLogoFormat: {
+      usualFirstName: 'Org',
+      firstNamePassport: 'Org',
+      lastNamePassport: 'Admin',
+      email: 'org.invalidlogo@mailinator.com',
+      password: 'Admin@12345',
+      country: 'India',
+      companyName: 'KiwiQA InvalidLogo',
+      logoPath: TEST_FILES.INVALID_PDF, // invalid format
+      address: 'Plot 12, Tech Park, Bangalore',
+      contactCountry: 'India',
+      contactNumber: '+91 87874-56214',
+      description: 'Invalid file format for company logo',
     },
-  ];
+  };
+
+  return scenarios[type] ?? scenarios['validWithAllFields'];
 };
 
 // ============================================================================
@@ -255,7 +288,5 @@ export const loginTestScenariosFactory = (): {
 export const DataFactory = {
   validCredentials: validCredentialsFactory,
   invalidCredentials: invalidCredentialsFactory,
-  testUser: testUserFactory,
-  bulkTestUsers: bulkTestUsersFactory,
-  loginScenarios: loginTestScenariosFactory,
+  companyData: companyDataFactory,
 };

@@ -1,38 +1,4 @@
-/* import { chromium, FullConfig } from '@playwright/test';
-import dotenv from 'dotenv';
-import path from 'path';
-import { Logger } from './src/utils/logger';
-
-const logger = Logger.getInstance();
-
-async function globalSetup(config: FullConfig): Promise<void> {
-  // Load env
-  const ENV = process.env.ENV || 'uat';
-  dotenv.config({ path: path.resolve(__dirname, `env/${ENV}.env`) });
-  dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-  logger.info('='.repeat(60));
-  logger.info(`🚀 Global Setup Started`);
-  logger.info(`📌 Environment  : ${ENV.toUpperCase()}`);
-  logger.info(`🌐 Base URL     : ${process.env.BASE_URL}`);
-  logger.info(`🖥️  Headless     : ${process.env.HEADLESS !== 'false'}`);
-  logger.info(`⚙️  Workers      : ${config.workers}`);
-  logger.info('='.repeat(60));
-
-  // Optional: Pre-authentication / token setup
-  // Example: generate auth state file to reuse across tests
-  // const browser = await chromium.launch();
-  // const page = await browser.newPage();
-  // await page.goto(process.env.BASE_URL!);
-  // ... login steps ...
-  // await page.context().storageState({ path: 'auth/user.json' });
-  // await browser.close();
-}
-
-export default globalSetup;
- */
-
-import fs from 'fs';
+/* import fs from 'fs';
 import path from 'path';
 
 async function globalSetup() {
@@ -52,6 +18,81 @@ async function globalSetup() {
   process.env.LOG_FILE_PATH = logFilePath;
 
   console.log(`🕒 Execution Timestamp: ${timestamp}`);
+}
+
+export default globalSetup;
+ */
+
+import { validCredentialsFactory } from './src/utils/dataGenerator';
+import { chromium } from '@playwright/test';
+import path from 'path';
+import fs from 'fs';
+
+// ── storageState ka path — playwright.config.ts me bhi use hoga ──
+export const STORAGE_STATE_PATH = path.resolve(
+  process.cwd(),
+  'test-results',
+  'auth',
+  'storageState.json',
+);
+
+async function globalSetup() {
+  // ─────────────────────────────────────────────────────────────
+  // ✅ Logs Directory Setup
+  // ─────────────────────────────────────────────────────────────
+  const logsDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logsDir)) {
+    fs.mkdirSync(logsDir, { recursive: true });
+  }
+
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  process.env.EXECUTION_RUN_TIMESTAMP = timestamp;
+
+  const logFilePath = path.join(logsDir, `test-run-${timestamp}.log`);
+  process.env.LOG_FILE_PATH = logFilePath;
+
+  console.log(`🕒 Execution Timestamp: ${timestamp}`);
+
+  // ─────────────────────────────────────────────────────────────
+  // ✅ Auth Directory Setup
+  // ─────────────────────────────────────────────────────────────
+  const authDir = path.dirname(STORAGE_STATE_PATH);
+  if (!fs.existsSync(authDir)) {
+    fs.mkdirSync(authDir, { recursive: true });
+  }
+
+  const credentials = validCredentialsFactory('SUPER_ADMIN');
+
+  const browser = await chromium.launch();
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  try {
+    console.log('🔐 Global Setup: Performing Super Admin login...');
+
+    await page.goto(process.env.BASE_URL_QA ?? process.env.BASE_URL ?? '');
+
+    await page.getByRole('textbox', { name: 'Enter Your Email Here' }).fill(credentials.email);
+
+    await page.getByRole('textbox', { name: 'Enter Password Here' }).fill(credentials.password);
+
+    await page.getByRole('button', { name: 'Log In' }).click();
+
+    // ── Post-login page load ka wait ──
+    await page.waitForURL(/dashboard|home|companies/i, { timeout: 30000 });
+
+    // ── storageState save karo ──
+    await context.storageState({ path: STORAGE_STATE_PATH });
+
+    console.log(`✅ Global Setup: Auth state saved → ${STORAGE_STATE_PATH}`);
+  } catch (error: unknown) {
+    console.error(
+      `❌ Global Setup Login Failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    throw error;
+  } finally {
+    await browser.close();
+  }
 }
 
 export default globalSetup;
