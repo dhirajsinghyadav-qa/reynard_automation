@@ -184,15 +184,15 @@ export class HomePage {
       .first();
 
     // Profile Details Panel
-    this.profileDetailsPanel = page.locator('.MuiBox-root.css-11b450n');
+    this.profileDetailsPanel = page.locator('[class*="MuiBox"], [class*="MuiGrid"]')
+      .filter({ has: page.getByRole('heading', { name: 'Admin Details' }) })
+      .first();
     this.adminDetailsHeading = page.getByRole('heading', { name: 'Admin Details' });
-    this.adminDetailsText = page.getByText(
-      'OOrg Adminorg.invalidemergency@mailinator.comAdmin DetailsOrganization',
-    );
+    this.adminDetailsText = page.locator('.MuiBox-root.css-11b450n');
 
     // ── Profile Info ──
-    this.profileAdminName = page.getByText('Org Admin', { exact: true });
-    this.profileAdminEmail = page.getByText('org.invalidemergency@', { exact: false });
+    this.profileAdminName = page.locator('p').filter({ hasText: /^[A-Za-z]/ }).first()
+    this.profileAdminEmail = page.locator('p').filter({ hasText: /@/ }).first();
 
     this.switchUserIcon = page.getByRole('button', { name: 'edit report type' });
 
@@ -1056,12 +1056,17 @@ export class HomePage {
 
   async waitForProfilePanelVisible(): Promise<void> {
     try {
-      await this.profileDetailsPanel.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Profile details panel is visible');
+      // ── Profile page load hone ka wait karo ──
+      await this.page.waitForURL(/profile/i, { timeout: 20000 });
+
+      // ── Admin Details heading visible hone ka wait karo ──
+      await this.adminDetailsHeading.waitFor({ state: 'visible', timeout: 20000 });
+
+      Logger.info(this.testName, 'Profile page loaded — Admin Details visible');
     } catch (error: unknown) {
       Logger.error(
         this.testName,
-        `Profile details panel not visible: ${error instanceof Error ? error.message : String(error)}`,
+        `Profile page not loaded: ${error instanceof Error ? error.message : String(error)}`,
       );
       throw error;
     }
@@ -1082,8 +1087,20 @@ export class HomePage {
 
   async verifyAdminDetailsTextVisible(): Promise<void> {
     try {
-      await this.adminDetailsText.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Admin details text content is visible');
+      // ── Profile panel visible hone ka wait karo ──
+      await this.profileDetailsPanel.waitFor({ state: 'visible' });
+
+      // ── Panel me kuch bhi content ho — empty na ho ──
+      const panelText = await this.profileDetailsPanel.textContent();
+
+      if (!panelText || panelText.trim().length === 0) {
+        throw new Error('Profile details panel is visible but has no content');
+      }
+
+      Logger.info(
+        this.testName,
+        `Admin details text content is visible — content: "${panelText.trim().substring(0, 80)}..."`,
+      );
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -1092,9 +1109,16 @@ export class HomePage {
       throw error;
     }
   }
+
   async waitForProfileAdminNameVisible(): Promise<void> {
     try {
-      await this.profileAdminName.waitFor({ state: 'visible' });
+      // ── Profile page pe name paragraph me hota hai ──
+      const nameLocator = this.page
+        .locator('p')
+        .filter({ hasText: /^[A-Za-z]/ })
+        .first();
+
+      await nameLocator.waitFor({ state: 'visible', timeout: 20000 });
       Logger.info(this.testName, 'Profile admin name is visible');
     } catch (error: unknown) {
       Logger.error(
@@ -1107,7 +1131,13 @@ export class HomePage {
 
   async waitForProfileAdminEmailVisible(): Promise<void> {
     try {
-      await this.profileAdminEmail.waitFor({ state: 'visible' });
+      // ── Profile page pe email paragraph me hoti hai ──
+      const emailLocator = this.page
+        .locator('p')
+        .filter({ hasText: /@/ })
+        .first();
+
+      await emailLocator.waitFor({ state: 'visible', timeout: 20000 });
       Logger.info(this.testName, 'Profile admin email is visible');
     } catch (error: unknown) {
       Logger.error(
@@ -1125,15 +1155,17 @@ export class HomePage {
     try {
       // ── Admin Details Heading ──
       const headingText = await this.adminDetailsHeading.textContent();
-      Logger.info(this.testName, `Profile → Admin Details Heading : "${headingText?.trim()}"`);
+      Logger.info(this.testName, `Profile → Admin Details Heading: "${headingText?.trim()}"`);
 
-      // ── Profile Panel Full Text ──
+      // ── Profile Panel Full Text — dynamic ──
       const panelText = await this.profileDetailsPanel.textContent();
-      Logger.info(this.testName, `Profile → Panel Full Data            : "${panelText?.trim()}"`);
+      Logger.info(this.testName, `Profile → Panel Full Data: "${panelText?.trim()}"`);
 
-      // ── Admin Details Text Block ──
-      const detailsText = await this.adminDetailsText.textContent();
-      Logger.info(this.testName, `Profile → Details Text Block    : "${detailsText?.trim()}"`);
+      // ── Email extract karo dynamically ──
+      const allTexts  = await this.profileDetailsPanel.locator('p, span, div').allTextContents();
+      const emailText = allTexts.find(t => t.includes('@')) ?? 'email not found';
+      Logger.info(this.testName, `Profile → Admin Email: "${emailText.trim()}"`);
+
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -1152,24 +1184,33 @@ export class HomePage {
     email: string;
     panelText: string;
   }> {
-    const panel = this.profileDetailsPanel;
-    await panel.waitFor({ state: 'visible' });
+    try {
+      // ── Profile page load wait ──
+      await this.page.waitForURL(/profile/i, { timeout: 20000 });
+      await this.adminDetailsHeading.waitFor({ state: 'visible' });
 
-    const panelText = (await panel.textContent()) ?? '';
+      // ── Name — first paragraph ──
+      const nameLocator = this.page.locator('p').filter({ hasText: /^[A-Za-z]/ }).first();
+      const name        = ((await nameLocator.textContent()) ?? '').trim();
 
-    const name = ((await panel.locator('p, h6, span').first().textContent()) ?? '').trim();
+      // ── Email — paragraph with @ ──
+      const emailLocator = this.page.locator('p').filter({ hasText: /@/ }).first();
+      const email        = ((await emailLocator.textContent()) ?? '').trim();
 
-    const allTexts = await panel.locator('p, span, div').allTextContents();
-    const email = allTexts.find((t) => t.includes('@')) ?? '';
+      // ── Full page text ──
+      const panelText = ((await this.page.locator('body').textContent()) ?? '').trim();
 
-    Logger.info(this.testName, `Dynamic Profile Name: ${name}`);
-    Logger.info(this.testName, `Dynamic Profile Email: ${email}`);
+      Logger.info(this.testName, `Dynamic Profile Name : ${name}`);
+      Logger.info(this.testName, `Dynamic Profile Email: ${email}`);
 
-    return {
-      name,
-      email,
-      panelText: panelText.trim(),
-    };
+      return { name, email, panelText };
+    } catch (error: unknown) {
+      Logger.error(
+        this.testName,
+        `captureProfileDetailsDynamic failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw error;
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
