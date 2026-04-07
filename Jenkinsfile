@@ -250,7 +250,7 @@ pipeline {
       // Archive logs
       archiveArtifacts(
         artifacts: 'logs/*.log, test-results/**/*.png, test-results/**/*.webm, test-results/results.json, test-results/screenshots/**, test-results/**/*.zip',
-        allowEmptyArchive: false
+        allowEmptyArchive: true
       )
 
       // ✅ results.json se flaky + failed summary print karo
