@@ -205,36 +205,6 @@ pipeline {
       }
     }
 
-    /* stage('Execute Playwright Tests') {
-      steps {
-        script {
-
-          def browser = env.DYNAMIC_BROWSER
-          def tag     = env.DYNAMIC_TAG
-          def workers = env.DYNAMIC_WORKERS
-
-          def grepTag = tag != 'all' ? "--grep \"@${tag}\"" : ''
-
-          def runTest = { browserName ->
-            bat """
-            echo Running on ${browserName}
-            npx playwright test ${grepTag} --project=${browserName} --workers=${workers}
-            """
-          }
-
-          if (browser == 'all') {
-            parallel(
-              "Chromium": { runTest('chromium') },
-              "Firefox" : { runTest('firefox') },
-              "WebKit"  : { runTest('webkit') }
-            )
-          } else {
-            runTest(browser)
-          }
-        }
-      }
-    } */
-
     stage('Generate Allure Report') {
       steps {
         script {
@@ -279,8 +249,8 @@ pipeline {
 
       // Archive logs
       archiveArtifacts(
-      artifacts: 'logs/*.log, test-results/**/*.png, test-results/**/*.webm, test-results/results.json, test-results/screenshots/**, test-results/**/*.zip',
-      allowEmptyArchive: true
+        artifacts: 'logs/*.log, test-results/**/*.png, test-results/**/*.webm, test-results/results.json, test-results/screenshots/**, test-results/**/*.zip',
+        allowEmptyArchive: false
       )
 
       // ✅ results.json se flaky + failed summary print karo
