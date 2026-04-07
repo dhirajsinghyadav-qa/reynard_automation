@@ -230,6 +230,11 @@ pipeline {
     always {
       echo '📋 Archiving test artifacts...'
 
+      // ✅ Ensure logs folder exists — Windows bat
+      bat 'if not exist logs mkdir logs'
+      bat 'if not exist test-results mkdir test-results'
+      bat 'if not exist test-results\\screenshots mkdir test-results\\screenshots'
+
       // Publish JUnit results
       junit(
         testResults: 'test-results/junit-report.xml',

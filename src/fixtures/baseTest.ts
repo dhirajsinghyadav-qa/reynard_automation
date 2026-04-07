@@ -197,9 +197,6 @@ export const test = base.extend({
       }
     }
 
-    // ✅ Flush logs
-    Logger.flushAll();
-
     // ✅ Capture video BEFORE context close
     // ─────────────────────────────────────────────
     let videoPath: string | undefined;
@@ -212,6 +209,9 @@ export const test = base.extend({
     } catch {
       // silent
     }
+
+    // ✅ Flush logs
+    Logger.flushAll();
 
     await context.close();
 
