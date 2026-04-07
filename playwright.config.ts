@@ -40,7 +40,7 @@ export default defineConfig({
     baseURL: ENV.BASE_URL_QA,
     headless: true,
     screenshot: 'only-on-failure',
-    video: 'on',
+    video: 'retain-on-failure',
     trace: 'retain-on-failure',
     actionTimeout: 20000,
     navigationTimeout: 30000,

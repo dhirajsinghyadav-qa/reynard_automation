@@ -64,15 +64,6 @@ function getOrCreateLogger(specFile: string, browser: string): winston.Logger {
         filename: logFilePath,
         options: { flags: 'a' },
       }),
-      // ── Error only file — per spec ──
-      new winston.transports.File({
-        filename: path.join(
-          logsDir,
-          `${sanitizedSpec}__${sanitizedBrowser}__${executionTimestamp}__errors.log`,
-        ),
-        level: 'error',
-        options: { flags: 'a' },
-      }),
       // ── Console ──
       new winston.transports.Console({
         format: winston.format.combine(winston.format.colorize(), logFormat),
