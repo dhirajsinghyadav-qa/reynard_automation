@@ -44,6 +44,9 @@ export const test = base.extend({
 
     await use(page);
 
+    // ✅ Flush logs
+    Logger.flushAll();
+
     // ─────────────────────────────────────────────────────────
     // ✅ After test — failure + FLAKY info capture
     // ─────────────────────────────────────────────────────────
@@ -56,7 +59,9 @@ export const test = base.extend({
     if ((isFailed || isTimedOut) && testInfo.retry === 0) {
       try {
         const data = {
-          title: testInfo.title, error: testInfo.error?.message || 'No error message', stack: testInfo.error?.stack || '',
+          title: testInfo.title,
+          error: testInfo.error?.message || 'No error message',
+          stack: testInfo.error?.stack || '',
         };
 
         const dir = path.dirname(flakyFilePath);
@@ -98,15 +103,19 @@ export const test = base.extend({
           Logger.error(testInfo.title, `🔁 FLAKY TEST (retry ${testInfo.retry})`);
           Logger.error(testInfo.title, `❌ FIRST ERROR: ${data.error}`);
 
+          if (data.stack) {
+            Logger.error(testInfo.title, `📌 [STACK TRACE]\n${data.stack}`);
+          }
+
+          // cleanup after use
           fs.unlinkSync(flakyFilePath);
+        } else {
+          Logger.error(testInfo.title, '⚠️ Flaky detected but no first failure data found');
         }
       } catch {
-        // silent
+        Logger.error(testInfo.title, '⚠️ Error reading flaky log file');
       }
     }
-
-    // ✅ Flush logs
-    Logger.flushAll();
 
     await context.close();
   },
