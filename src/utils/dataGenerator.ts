@@ -282,6 +282,89 @@ export const companyDataFactory = (type: string = 'validWithAllFields'): Company
 };
 
 // ============================================================================
+// ORG ADMIN PROFILE DATA TYPES
+// ============================================================================
+
+export interface ProfileData {
+  usualFirstName: string;
+  firstNames: string;
+  lastNames: string;
+  country: string;
+  language: string;
+  address: string;
+  email: string;
+  phone: string;
+  emergencyContactCountry?: string;
+  emergencyContactNumber?: string;
+  description?: string;
+}
+
+// ============================================================================
+// ORG ADMIN PROFILE DATA FACTORY
+// ============================================================================
+
+
+const getUniqueSuffixforProfile = () => Date.now() + Math.floor(Math.random() * 1000);
+
+export const profileDataFactory = (type: string = 'validProfile'): ProfileData => {
+  const unique = getUniqueSuffixforProfile();
+
+  const scenarios: { [key: string]: ProfileData } = {
+    validProfile: {
+      usualFirstName: 'Org',
+      firstNames: 'Org Admin',
+      lastNames: 'User',
+      country: 'India',
+      language: 'English',
+      address: 'Test Address Bangalore',
+      email: `org.profile.${unique}@mailinator.com`,
+      phone: '+91 9876543210',
+      description: 'Valid profile update',
+    },
+
+    // Invalid email scenario
+    invalidEmailFormat: {
+      usualFirstName: 'Org',
+      firstNames: 'Org Admin',
+      lastNames: 'User',
+      country: 'India',
+      language: 'English',
+      address: 'Test Address',
+      email: 'org.@com',
+      phone: '+91 9876543210',
+      description: 'Invalid email format',
+    },
+
+    invalidPhone: {
+      usualFirstName: 'Org',
+      firstNames:     'Org',
+      lastNames:      'Admin',
+      country:        'India',
+      language:       'English',
+      address:        'Add.',
+      email:          `org.phone.${unique}@mailinator.com`,
+      phone:          'abcdefghij',
+      description:    'Invalid phone number format',
+    },
+
+    // Empty mandatory fields
+    emptyMandatory: {
+      usualFirstName: ' ',
+      firstNames: ' ',
+      lastNames: ' ',
+      country: ' ',
+      language: ' ',
+      address: ' ',
+      email: ' ',
+      phone: '',
+      description: 'Empty mandatory fields',
+    },
+  };
+
+  return scenarios[type] ?? scenarios['validProfile'];
+};
+
+// ============================================================================
 // EXPORT FACTORY BUILDER
 // ============================================================================
 
@@ -289,4 +372,5 @@ export const DataFactory = {
   validCredentials: validCredentialsFactory,
   invalidCredentials: invalidCredentialsFactory,
   companyData: companyDataFactory,
+  profileData: profileDataFactory,
 };

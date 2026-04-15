@@ -35,6 +35,8 @@ export const test = base.extend({
     Logger.setBrowser(testInfo.project.name);
     Logger.setSpecFile(testInfo.file);
 
+    Logger.info(testInfo.title, `➡️ TEST STARTED | Retry: ${testInfo.retry}`);
+
     // ─────────────────────────────────────────────────────────
     // ✅ Page crash
     // ─────────────────────────────────────────────────────────
@@ -43,9 +45,6 @@ export const test = base.extend({
     });
 
     await use(page);
-
-    // ✅ Flush logs
-    Logger.flushAll();
 
     // ─────────────────────────────────────────────────────────
     // ✅ After test — failure + FLAKY info capture
@@ -118,6 +117,9 @@ export const test = base.extend({
     }
 
     await context.close();
+
+    // ✅ Flush logs
+    Logger.flushAll();
   },
 });
 
