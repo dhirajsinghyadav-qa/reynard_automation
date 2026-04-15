@@ -87,57 +87,60 @@ export class OrgAdminProfilePage {
     this.profileAdminEmail = page.locator('p').filter({ hasText: /@/ }).first();
 
     // ── Tabs — dynamic by role ──
-    this.adminDetailsTab         = page.getByRole('tab', { name: 'Admin Details' });
-    this.organizationProfileTab  = page.getByRole('tab', { name: 'Organization Profile' });
-    this.licenseTab              = page.getByRole('tab', { name: 'License' });
+    this.adminDetailsTab = page.getByRole('tab', { name: 'Admin Details' });
+    this.organizationProfileTab = page.getByRole('tab', { name: 'Organization Profile' });
+    this.licenseTab = page.getByRole('tab', { name: 'License' });
 
     // ── Section headings ──
-    this.adminDetailsHeading        = page.getByRole('heading', { name: 'Admin Details' });
+    this.adminDetailsHeading = page.getByRole('heading', { name: 'Admin Details' });
     this.adminProfileDetailsPanel = page
       .locator('[class*="MuiBox"], [class*="MuiGrid"]')
       .filter({ has: page.getByRole('heading', { name: 'Admin Details' }) })
       .first();
     this.organizationProfileHeading = page.getByRole('heading', { name: 'Organization Profile' });
-    this.organizationProfilePanel   = page.locator('.MuiBox-root.css-11b450n');
-    this.licenseHeading             = page.getByRole('heading', { name: 'License' });
-    this.licensePanel               = page.locator('.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true');
+    this.organizationProfilePanel = page.locator('.MuiBox-root.css-11b450n');
+    this.licenseHeading = page.getByRole('heading', { name: 'License' });
+    this.licensePanel = page.locator('.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true');
 
     // ── Edit Icon — dynamic ──
     this.editIcon = page.getByTestId('EditOutlinedIcon');
 
     // ── Update Profile Popup ──
     this.updateProfilePopup = page.getByText('Update Admin Profile');
-    this.updateButton       = page.getByRole('button', { name: 'Update' });
-    this.updateAdminProfileCancelIcon         = page.getByTestId('CancelOutlinedIcon').first();
+    this.updateButton = page.getByRole('button', { name: 'Update' });
+    this.updateAdminProfileCancelIcon = page.getByTestId('CancelOutlinedIcon').first();
 
     // ── Form Fields — dynamic by role ──
     this.usualFirstNameInput = page.getByRole('textbox', { name: 'Usual First Name' });
-    this.firstNamesInput     = page.getByRole('textbox', { name: 'First Names' });
-    this.lastNamesInput      = page.getByRole('textbox', { name: 'Last Names' });
-    this.emailInput          = page.getByRole('textbox', { name: 'Email' });
-    this.phoneInput          = page.getByRole('textbox', { name: '1 (702) 123-' }).first();
+    this.firstNamesInput = page.getByRole('textbox', { name: 'First Names' });
+    this.lastNamesInput = page.getByRole('textbox', { name: 'Last Names' });
+    this.emailInput = page.getByRole('textbox', { name: 'Email' });
+    this.phoneInput = page.getByRole('textbox', { name: '1 (702) 123-' }).first();
     this.countrySelectButton = page
       .getByRole('button', { name: /^(Select|India|Netherlands|United States|Laos|.*)/i })
       .filter({ hasText: /Select|India|Netherlands|United|Laos/i })
       .first();
-    this.languageInput       = page.getByRole('textbox', { name: 'Enter Language Name' });
-    this.addressInput        = page.getByRole('textbox', { name: 'Please Enter Address' });
+    this.languageInput = page.getByRole('textbox', { name: 'Enter Language Name' });
+    this.addressInput = page.getByRole('textbox', { name: 'Please Enter Address' });
     this.emergencyContactInput = page.getByRole('textbox', { name: '1 (702) 123-' }).nth(1);
 
     // ── Validation Messages ──
-    this.invalidEmailMessage  = page.getByText('Enter Valid Email Address');
+    this.invalidEmailMessage = page.getByText('Enter Valid Email Address');
     this.requiredFieldMessages = page.getByText('Required.');
 
     // ── Confirmation Popups ──
-    this.removePermissionHeading  = page.getByText('Remove Permission', { exact: true });
+    this.removePermissionHeading = page.getByText('Remove Permission', { exact: true });
     this.approvePermissionHeading = page.locator('div').filter({ hasText: /^Approve Permission$/ });
-    this.approveButton            = page.getByRole('button', { name: 'Approve' });
-    this.rejectButton             = page.getByRole('button', { name: 'Reject' });
-    this.confirmationCancelIcon   = page.getByTestId('CancelOutlinedIcon');
+    this.approveButton = page.getByRole('button', { name: 'Approve' });
+    this.rejectButton = page.getByRole('button', { name: 'Reject' });
+    this.confirmationCancelIcon = page.getByTestId('CancelOutlinedIcon');
 
     // ── Success Alert ──
-    this.successAlert          = page.getByRole('alert');
-    this.licenseProvisionedAlert = page.getByRole('alert').locator('div').filter({ hasText: 'License provisioned' });
+    this.successAlert = page.getByRole('alert');
+    this.licenseProvisionedAlert = page
+      .getByRole('alert')
+      .locator('div')
+      .filter({ hasText: 'License provisioned' });
 
     // ── Profile Info ──
     this.profileAdminName = page.getByText('Tim Naber');
@@ -173,33 +176,80 @@ export class OrgAdminProfilePage {
     return this.adminProfileDetailsPanel;
   }
   getOrganizationProfileHeading() {
-    return this.organizationProfileHeading; }
-  getOrganizationProfilePanel() { return this.organizationProfilePanel; }
-  getLicenseHeading()           { return this.licenseHeading; }
-  getLicensePanel()             { return this.licensePanel; }
-  getEditIcon()                 { return this.editIcon; }
-  getUpdateProfilePopup()       { return this.updateProfilePopup; }
-  getUpdateButton()             { return this.updateButton; }
-  getUpdateAdminProfileCancelIcon()               { return this.updateAdminProfileCancelIcon; }
-  getUsualFirstNameInput()      { return this.usualFirstNameInput; }
-  getFirstNamesInput()          { return this.firstNamesInput; }
-  getLastNamesInput()           { return this.lastNamesInput; }
-  getEmailInput()               { return this.emailInput; }
-  getPhoneInput()               { return this.phoneInput; }
-  getCountrySelectButton()      { return this.countrySelectButton; }
-  getLanguageInput()            { return this.languageInput; }
-  getAddressInput()             { return this.addressInput; }
+    return this.organizationProfileHeading;
+  }
+  getOrganizationProfilePanel() {
+    return this.organizationProfilePanel;
+  }
+  getLicenseHeading() {
+    return this.licenseHeading;
+  }
+  getLicensePanel() {
+    return this.licensePanel;
+  }
+  getEditIcon() {
+    return this.editIcon;
+  }
+  getUpdateProfilePopup() {
+    return this.updateProfilePopup;
+  }
+  getUpdateButton() {
+    return this.updateButton;
+  }
+  getUpdateAdminProfileCancelIcon() {
+    return this.updateAdminProfileCancelIcon;
+  }
+  getUsualFirstNameInput() {
+    return this.usualFirstNameInput;
+  }
+  getFirstNamesInput() {
+    return this.firstNamesInput;
+  }
+  getLastNamesInput() {
+    return this.lastNamesInput;
+  }
+  getEmailInput() {
+    return this.emailInput;
+  }
+  getPhoneInput() {
+    return this.phoneInput;
+  }
+  getCountrySelectButton() {
+    return this.countrySelectButton;
+  }
+  getLanguageInput() {
+    return this.languageInput;
+  }
+  getAddressInput() {
+    return this.addressInput;
+  }
   getEmergencyContactInput(): Locator {
     return this.emergencyContactInput;
   }
-  getInvalidEmailMessage()      { return this.invalidEmailMessage; }
-  getRequiredFieldMessages()    { return this.requiredFieldMessages; }
-  getRemovePermissionHeading()  { return this.removePermissionHeading; }
-  getApprovePermissionHeading() { return this.approvePermissionHeading; }
-  getApproveButton()            { return this.approveButton; }
-  getRejectButton()             { return this.rejectButton; }
-  getSuccessAlert()             { return this.successAlert; }
-  getLicenseProvisionedAlert()  { return this.licenseProvisionedAlert; }
+  getInvalidEmailMessage() {
+    return this.invalidEmailMessage;
+  }
+  getRequiredFieldMessages() {
+    return this.requiredFieldMessages;
+  }
+  getRemovePermissionHeading() {
+    return this.removePermissionHeading;
+  }
+  getApprovePermissionHeading() {
+    return this.approvePermissionHeading;
+  }
+  getApproveButton() {
+    return this.approveButton;
+  }
+  getRejectButton() {
+    return this.rejectButton;
+  }
+  getSuccessAlert() {
+    return this.successAlert;
+  }
+  getLicenseProvisionedAlert() {
+    return this.licenseProvisionedAlert;
+  }
   getConfirmationCancelIcon() {
     return this.confirmationCancelIcon;
   }
@@ -303,10 +353,7 @@ export class OrgAdminProfilePage {
   async waitForLicenseDropdownExpanded(licenseName: string): Promise<void> {
     try {
       // ── Checkbox appear hone se pata chalta hai dropdown expand hua ──
-      await this.page
-        .getByRole('checkbox')
-        .first()
-        .waitFor({ state: 'visible', timeout: 10000 });
+      await this.page.getByRole('checkbox').first().waitFor({ state: 'visible', timeout: 10000 });
       Logger.info(this.testName, `License dropdown expanded: "${licenseName}"`);
     } catch (error: unknown) {
       Logger.error(
@@ -567,7 +614,10 @@ export class OrgAdminProfilePage {
     try {
       await this.updateAdminProfileCancelIcon.waitFor({ state: 'visible' });
       await this.updateAdminProfileCancelIcon.click();
-      Logger.info(this.testName, 'Update Admin Profile cancel icon clicked and Update Admin Profile form closed');
+      Logger.info(
+        this.testName,
+        'Update Admin Profile cancel icon clicked and Update Admin Profile form closed',
+      );
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -590,10 +640,10 @@ export class OrgAdminProfilePage {
   }> {
     try {
       const usualFirstName = await this.getFieldValue(this.usualFirstNameInput);
-      const firstNames     = await this.getFieldValue(this.firstNamesInput);
-      const lastNames      = await this.getFieldValue(this.lastNamesInput);
-      const email          = await this.getFieldValue(this.emailInput);
-      const phone          = await this.getFieldValue(this.phoneInput);
+      const firstNames = await this.getFieldValue(this.firstNamesInput);
+      const lastNames = await this.getFieldValue(this.lastNamesInput);
+      const email = await this.getFieldValue(this.emailInput);
+      const phone = await this.getFieldValue(this.phoneInput);
 
       Logger.info(this.testName, `Pre-filled → Usual First Name: "${usualFirstName}"`);
       Logger.info(this.testName, `Pre-filled → First Names: "${firstNames}"`);
@@ -645,7 +695,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'Usual First Name already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -667,7 +716,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'First Names already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -689,7 +737,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'Last Names already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -711,7 +758,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'Email already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -733,7 +779,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'Phone already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -771,7 +816,7 @@ export class OrgAdminProfilePage {
       await countryBtn.waitFor({ state: 'visible' });
 
       // ── Current selected value read karo ──
-      const currentText = (await countryBtn.textContent() ?? '').trim();
+      const currentText = ((await countryBtn.textContent()) ?? '').trim();
       Logger.info(this.testName, `Country button current value: "${currentText}"`);
 
       if (currentText.toLowerCase().includes(countryName.toLowerCase())) {
@@ -787,9 +832,7 @@ export class OrgAdminProfilePage {
         .getByRole('option', { name: countryName, exact: true })
         .waitFor({ state: 'visible', timeout: 10000 });
 
-      await this.page
-        .getByRole('option', { name: countryName, exact: true })
-        .click();
+      await this.page.getByRole('option', { name: countryName, exact: true }).click();
 
       Logger.info(this.testName, `Country selected: "${countryName}"`);
     } catch (error: unknown) {
@@ -877,7 +920,6 @@ export class OrgAdminProfilePage {
       } else {
         Logger.info(this.testName, 'Address already correct → skipped');
       }
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -908,7 +950,10 @@ export class OrgAdminProfilePage {
       await this.updateButton.click();
       Logger.info(this.testName, 'Update button clicked');
     } catch (error: unknown) {
-      Logger.error(this.testName, `Update button click failed: ${error instanceof Error ? error.message : String(error)}`);
+      Logger.error(
+        this.testName,
+        `Update button click failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -918,7 +963,10 @@ export class OrgAdminProfilePage {
       await this.invalidEmailMessage.waitFor({ state: 'visible' });
       Logger.info(this.testName, 'Invalid email validation message visible');
     } catch (error: unknown) {
-      Logger.error(this.testName, `Invalid email message not visible: ${error instanceof Error ? error.message : String(error)}`);
+      Logger.error(
+        this.testName,
+        `Invalid email message not visible: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -928,7 +976,10 @@ export class OrgAdminProfilePage {
       await this.requiredFieldMessages.first().waitFor({ state: 'visible' });
       Logger.info(this.testName, 'Required field validation messages visible');
     } catch (error: unknown) {
-      Logger.error(this.testName, `Required field messages not visible: ${error instanceof Error ? error.message : String(error)}`);
+      Logger.error(
+        this.testName,
+        `Required field messages not visible: ${error instanceof Error ? error.message : String(error)}`,
+      );
       throw error;
     }
   }
@@ -965,7 +1016,6 @@ export class OrgAdminProfilePage {
       Logger.info(this.testName, '── Profile Form Filled Successfully ──');
 
       // await this.clickUpdateButton();
-
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -974,13 +1024,6 @@ export class OrgAdminProfilePage {
       throw error;
     }
   }
-
-
-
-
-
-
-
 
   // ─────────────────────────────────────────────────────────────
   // PROFILE DETAILS — ACTIONS

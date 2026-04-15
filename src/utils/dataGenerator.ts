@@ -303,7 +303,6 @@ export interface ProfileData {
 // ORG ADMIN PROFILE DATA FACTORY
 // ============================================================================
 
-
 const getUniqueSuffixforProfile = () => Date.now() + Math.floor(Math.random() * 1000);
 
 export const profileDataFactory = (type: string = 'validProfile'): ProfileData => {
@@ -337,14 +336,14 @@ export const profileDataFactory = (type: string = 'validProfile'): ProfileData =
 
     invalidPhone: {
       usualFirstName: 'Org',
-      firstNames:     'Org',
-      lastNames:      'Admin',
-      country:        'India',
-      language:       'English',
-      address:        'Add.',
-      email:          `org.phone.${unique}@mailinator.com`,
-      phone:          'abcdefghij',
-      description:    'Invalid phone number format',
+      firstNames: 'Org',
+      lastNames: 'Admin',
+      country: 'India',
+      language: 'English',
+      address: 'Add.',
+      email: `org.phone.${unique}@mailinator.com`,
+      phone: 'abcdefghij',
+      description: 'Invalid phone number format',
     },
 
     // Empty mandatory fields
