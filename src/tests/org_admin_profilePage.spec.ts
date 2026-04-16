@@ -35,7 +35,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     Logger.flushAll();
   });
 
-  /* test('@smoke @regression TC_PE_01 - Verify default tab selection on profile page', async ({
+  test('@smoke @regression TC_PE_01 - Verify default tab selection on profile page', async ({
     page,
   }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
@@ -271,7 +271,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
 
     // ── Verify popup is closed ──
     await expect(orgadminprofilePage.getUpdateProfilePopup()).not.toBeVisible({ timeout: 5000 });
-  }); */
+  });
 
   test('@regression TC_PE_09 - Verify mandatory field validation on empty form submit', async ({
     page,
@@ -301,7 +301,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     await expect(orgadminprofilePage.getRequiredFieldMessages().first()).toBeVisible();
   });
 
-  /* test('@regression TC_PE_10 - Verify validation error for invalid Email format', async ({
+  test('@regression TC_PE_10 - Verify validation error for invalid Email format', async ({
     page,
   }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
@@ -389,7 +389,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
 
     // await expect(orgadminprofilePage.getAdminDetailsHeading()).toBeVisible();
     Logger.info(testInfo.title, `Profile updated successfully — ${data.description}`);
-  }); */
+  });
 
   /* test( '@regression TC_PE_13 - Verify data persistence after profile update',
     async ({ page }, testInfo) => {

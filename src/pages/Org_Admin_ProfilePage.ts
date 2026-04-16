@@ -730,7 +730,7 @@ export class OrgAdminProfilePage {
       Logger.info(this.testName, `${fieldName} AFTER clear → "${after}"`);
 
       // remove mask chars
-      const cleaned = after.replace(/[\s\-\+\(\)]/g, '');
+      const cleaned = after.replace(/[\s\-+()]/g, '');
 
       if (cleaned === '') {
         Logger.info(this.testName, `✅ ${fieldName} cleared successfully`);
