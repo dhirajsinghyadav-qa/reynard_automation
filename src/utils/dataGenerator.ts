@@ -303,10 +303,22 @@ export interface ProfileData {
 // ORG ADMIN PROFILE DATA FACTORY
 // ============================================================================
 
-const getUniqueSuffixforProfile = () => Date.now() + Math.floor(Math.random() * 1000);
+const getShortUnique = () => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const length = Math.floor(Math.random() * 2) + 1; // 1 or 2 chars
+
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return result;
+};
+
+// const getUniqueSuffixforProfile = () => Date.now() + Math.floor(Math.random() * 1000);
 
 export const profileDataFactory = (type: string = 'validProfile'): ProfileData => {
-  const unique = getUniqueSuffixforProfile();
+  // const unique = getUniqueSuffixforProfile();
 
   const scenarios: { [key: string]: ProfileData } = {
     validProfile: {
@@ -316,7 +328,7 @@ export const profileDataFactory = (type: string = 'validProfile'): ProfileData =
       country: 'India',
       language: 'English',
       address: 'Test Address Bangalore',
-      email: `org.profile.${unique}@mailinator.com`,
+      email: `org.${getShortUnique()}@mailinator.com`,
       phone: '+91 9876543210',
       description: 'Valid profile update',
     },
@@ -341,22 +353,9 @@ export const profileDataFactory = (type: string = 'validProfile'): ProfileData =
       country: 'India',
       language: 'English',
       address: 'Add.',
-      email: `org.phone.${unique}@mailinator.com`,
+      email: `org.${getShortUnique()}@mailinator.com`,
       phone: 'abcdefghij',
       description: 'Invalid phone number format',
-    },
-
-    // Empty mandatory fields
-    emptyMandatory: {
-      usualFirstName: ' ',
-      firstNames: ' ',
-      lastNames: ' ',
-      country: ' ',
-      language: ' ',
-      address: ' ',
-      email: ' ',
-      phone: '',
-      description: 'Empty mandatory fields',
     },
   };
 

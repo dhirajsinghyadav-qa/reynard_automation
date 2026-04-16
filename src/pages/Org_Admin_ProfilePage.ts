@@ -75,76 +75,62 @@ export class OrgAdminProfilePage {
     this.testName = testName;
 
     // ── Eye Icon ──
-    this.eyeIconButton = page
-      .locator('.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorSecondary')
-      .first();
+    this.eyeIconButton                = page.locator('.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-colorSecondary').first();
 
     // ── Profile Info ──
-    this.profileAdminName = page
-      .locator('p')
-      .filter({ hasText: /^[A-Za-z]/ })
-      .first();
-    this.profileAdminEmail = page.locator('p').filter({ hasText: /@/ }).first();
+    this.profileAdminName             = page.locator('p').filter({ hasText: /^[A-Za-z]/ }).first();
+    this.profileAdminEmail            = page.locator('p').filter({ hasText: /@/ }).first();
 
     // ── Tabs — dynamic by role ──
-    this.adminDetailsTab = page.getByRole('tab', { name: 'Admin Details' });
-    this.organizationProfileTab = page.getByRole('tab', { name: 'Organization Profile' });
-    this.licenseTab = page.getByRole('tab', { name: 'License' });
+    this.adminDetailsTab              = page.getByRole('tab', { name: 'Admin Details' });
+    this.organizationProfileTab       = page.getByRole('tab', { name: 'Organization Profile' });
+    this.licenseTab                   = page.getByRole('tab', { name: 'License' });
 
     // ── Section headings ──
-    this.adminDetailsHeading = page.getByRole('heading', { name: 'Admin Details' });
-    this.adminProfileDetailsPanel = page
-      .locator('[class*="MuiBox"], [class*="MuiGrid"]')
-      .filter({ has: page.getByRole('heading', { name: 'Admin Details' }) })
-      .first();
-    this.organizationProfileHeading = page.getByRole('heading', { name: 'Organization Profile' });
-    this.organizationProfilePanel = page.locator('.MuiBox-root.css-11b450n');
-    this.licenseHeading = page.getByRole('heading', { name: 'License' });
-    this.licensePanel = page.locator('.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true');
+    this.adminDetailsHeading          = page.getByRole('heading', { name: 'Admin Details' });
+    this.adminProfileDetailsPanel     = page.locator('[class*="MuiBox"], [class*="MuiGrid"]').filter({ has: page.getByRole('heading', { name: 'Admin Details' }) }).first();
+    this.organizationProfileHeading   = page.getByRole('heading', { name: 'Organization Profile' });
+    this.organizationProfilePanel     = page.locator('.MuiBox-root.css-11b450n');
+    this.licenseHeading               = page.getByRole('heading', { name: 'License' });
+    this.licensePanel                 = page.locator('.MuiGrid-root.MuiGrid-item.MuiGrid-grid-xs-true');
 
     // ── Edit Icon — dynamic ──
-    this.editIcon = page.getByTestId('EditOutlinedIcon');
+    this.editIcon                     = page.getByTestId('EditOutlinedIcon');
 
     // ── Update Profile Popup ──
-    this.updateProfilePopup = page.getByText('Update Admin Profile');
-    this.updateButton = page.getByRole('button', { name: 'Update' });
+    this.updateProfilePopup           = page.getByText('Update Admin Profile');
+    this.updateButton                 = page.getByRole('button', { name: 'Update' });
     this.updateAdminProfileCancelIcon = page.getByTestId('CancelOutlinedIcon').first();
 
     // ── Form Fields — dynamic by role ──
-    this.usualFirstNameInput = page.getByRole('textbox', { name: 'Usual First Name' });
-    this.firstNamesInput = page.getByRole('textbox', { name: 'First Names' });
-    this.lastNamesInput = page.getByRole('textbox', { name: 'Last Names' });
-    this.emailInput = page.getByRole('textbox', { name: 'Email' });
-    this.phoneInput = page.getByRole('textbox', { name: '1 (702) 123-' }).first();
-    this.countrySelectButton = page
-      .getByRole('button', { name: /^(Select|India|Netherlands|United States|Laos|.*)/i })
-      .filter({ hasText: /Select|India|Netherlands|United|Laos/i })
-      .first();
-    this.languageInput = page.getByRole('textbox', { name: 'Enter Language Name' });
-    this.addressInput = page.getByRole('textbox', { name: 'Please Enter Address' });
-    this.emergencyContactInput = page.getByRole('textbox', { name: '1 (702) 123-' }).nth(1);
+    this.usualFirstNameInput          = page.getByRole('textbox', { name: 'Usual First Name' });
+    this.firstNamesInput              = page.getByRole('textbox', { name: 'First Names' });
+    this.lastNamesInput               = page.getByRole('textbox', { name: 'Last Names' });
+    this.emailInput                   = page.getByRole('textbox', { name: 'Email' });
+    this.phoneInput                   = page.getByRole('textbox', { name: '1 (702) 123-' }).first();
+    this.countrySelectButton          = page.getByRole('button', { name: /^(Select|India|Netherlands|United States|Laos|.*)/i }).filter({ hasText: /Select|India|Netherlands|United|Laos/i }).first();
+    this.languageInput                = page.getByRole('textbox', { name: 'Enter Language Name' });
+    this.addressInput                 = page.getByRole('textbox', { name: 'Please Enter Address' });
+    this.emergencyContactInput        = page.getByRole('textbox', { name: '1 (702) 123-' }).nth(1);
 
     // ── Validation Messages ──
-    this.invalidEmailMessage = page.getByText('Enter Valid Email Address');
-    this.requiredFieldMessages = page.getByText('Required.');
+    this.invalidEmailMessage          = page.getByText('Enter Valid Email Address');
+    this.requiredFieldMessages        = page.locator('text=Required.');
 
     // ── Confirmation Popups ──
-    this.removePermissionHeading = page.getByText('Remove Permission', { exact: true });
-    this.approvePermissionHeading = page.locator('div').filter({ hasText: /^Approve Permission$/ });
-    this.approveButton = page.getByRole('button', { name: 'Approve' });
-    this.rejectButton = page.getByRole('button', { name: 'Reject' });
-    this.confirmationCancelIcon = page.getByTestId('CancelOutlinedIcon');
+    this.removePermissionHeading      = page.getByText('Remove Permission', { exact: true });
+    this.approvePermissionHeading     = page.locator('div').filter({ hasText: /^Approve Permission$/ });
+    this.approveButton                = page.getByRole('button', { name: 'Approve' });
+    this.rejectButton                 = page.getByRole('button', { name: 'Reject' });
+    this.confirmationCancelIcon       = page.getByTestId('CancelOutlinedIcon');
 
     // ── Success Alert ──
-    this.successAlert = page.getByRole('alert');
-    this.licenseProvisionedAlert = page
-      .getByRole('alert')
-      .locator('div')
-      .filter({ hasText: 'License provisioned' });
+    this.successAlert                 = page.getByRole('alert');
+    this.licenseProvisionedAlert      = page.getByRole('alert').locator('div').filter({ hasText: 'License provisioned' });
 
     // ── Profile Info ──
-    this.profileAdminName = page.getByText('Tim Naber');
-    this.profileAdminEmail = page.getByText('tim.naber@reynard.nl');
+    this.profileAdminName             = page.getByText('Tim Naber');
+    this.profileAdminEmail            = page.getByText('tim.naber@reynard.nl');
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -267,6 +253,20 @@ export class OrgAdminProfilePage {
   // ── Dynamic — Get current field value ──
   async getFieldValue(locator: Locator): Promise<string> {
     return (await locator.inputValue()).trim();
+  }
+
+  // ─────────────────────────────────────────
+  // HELPERS
+  // ─────────────────────────────────────────
+  private async clearInputIfNotEmpty(locator: Locator, fieldName: string) {
+    const value = (await locator.inputValue().catch(() => '')).trim();
+
+    if (value !== '') {
+      await locator.fill('');
+      Logger.info(this.testName, `${fieldName} cleared`);
+    } else {
+      Logger.info(this.testName, `${fieldName} already empty → skipped`);
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -663,22 +663,73 @@ export class OrgAdminProfilePage {
 
   async clearAllMandatoryFields(): Promise<void> {
     try {
-      await this.usualFirstNameInput.clear();
-      await this.firstNamesInput.clear();
-      await this.lastNamesInput.clear();
-      // await this.countrySelectButton.clear();
-      // await this.languageInput.clear();
-      await this.addressInput.clear();
-      await this.emailInput.clear();
-      await this.phoneInput.clear();
-      await this.emergencyContactInput.clear();
+      // ── Text fields ──
+      await this.clearInputIfNotEmpty(this.usualFirstNameInput, 'Usual First Name');
+      await this.clearInputIfNotEmpty(this.firstNamesInput, 'First Names');
+      await this.clearInputIfNotEmpty(this.lastNamesInput, 'Last Names');
 
-      Logger.info(this.testName, 'All mandatory fields cleared');
+      // ── Language (special handling) ──
+      await this.clearLanguage();
+
+      // ── Address ──
+      await this.clearInputIfNotEmpty(this.addressInput, 'Address');
+
+      // ── Email ──
+      await this.clearInputIfNotEmpty(this.emailInput, 'Email');
+
+      // ── Phone fields (masked inputs) ──
+      await this.clearPhoneNumber(this.phoneInput, 'Phone');
+      await this.clearPhoneNumber(this.emergencyContactInput, 'Emergency Contact');
+
+      // ── Blur to trigger validation ──
+      await this.page.keyboard.press('Tab');
+
+      Logger.info(this.testName, 'All mandatory fields cleared successfully');
+
     } catch (error: unknown) {
       Logger.error(
         this.testName,
-        `Clear mandatory fields failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Clear mandatory fields failed: ${error instanceof Error ? error.message : String(error)}`
       );
+      throw error;
+    }
+  }
+
+  async clearPhoneNumber(locator: Locator, fieldName: string): Promise<void> {
+    try {
+      await locator.waitFor({ state: 'visible' });
+
+      const before = await locator.inputValue().catch(() => '');
+      Logger.info(this.testName, `${fieldName} BEFORE clear → "${before}"`);
+
+      // ✅ Click + Select All + Delete (fastest way)
+      await locator.click();
+      await locator.press('ControlOrMeta+A'); // select all
+      await locator.press('Delete');          // clear everything
+
+      // ✅ Force clear fallback (for masked input edge cases)
+      await locator.fill('');
+
+      // optional tiny wait for UI mask update
+      await this.page.waitForTimeout(50);
+
+      const after = await locator.inputValue().catch(() => '');
+      Logger.info(this.testName, `${fieldName} AFTER clear → "${after}"`);
+
+      // remove mask chars
+      const cleaned = after.replace(/[\s\-\+\(\)]/g, '');
+
+      if (cleaned === '') {
+        Logger.info(this.testName, `✅ ${fieldName} cleared successfully`);
+      } else {
+        Logger.error(
+          this.testName,
+          `❌ ${fieldName} NOT fully cleared — remaining: "${after}"`,
+        );
+      }
+
+    } catch (error) {
+      Logger.error(this.testName, `Clear ${fieldName} failed: ${error}`);
       throw error;
     }
   }
@@ -867,6 +918,40 @@ export class OrgAdminProfilePage {
     }
   } */
 
+  async clearLanguage(): Promise<void> {
+    try {
+      await this.languageInput.waitFor({ state: 'visible' });
+
+      const current = (await this.languageInput.inputValue()).trim();
+
+      if (!current) {
+        Logger.info(this.testName, 'Language already empty → skipped');
+        return;
+      }
+
+      // Try clear button first
+      const clearBtn = this.page.getByRole('button', { name: 'Clear' });
+
+      if (await clearBtn.isVisible().catch(() => false)) {
+        await clearBtn.click();
+        Logger.info(this.testName, 'Language cleared via Clear button');
+      } else {
+        // fallback (important)
+        await this.languageInput.click();
+        await this.languageInput.press('ControlOrMeta+A');
+        await this.languageInput.press('Backspace');
+        await this.languageInput.fill('');
+        Logger.info(this.testName, 'Language cleared via keyboard fallback');
+      }
+
+      await this.languageInput.blur();
+
+    } catch (error) {
+      Logger.error(this.testName, `Clear language failed: ${error}`);
+      throw error;
+    }
+  }
+
   async selectLanguage(languageName: string): Promise<void> {
     try {
       await this.languageInput.waitFor({ state: 'visible' });
@@ -961,7 +1046,8 @@ export class OrgAdminProfilePage {
   async waitForInvalidEmailMessage(): Promise<void> {
     try {
       await this.invalidEmailMessage.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Invalid email validation message visible');
+      const errorText = (await this.invalidEmailMessage.textContent())?.trim();
+      Logger.info(this.testName, `Invalid Email Validation Message: "${errorText}"`);
     } catch (error: unknown) {
       Logger.error(
         this.testName,
@@ -979,6 +1065,83 @@ export class OrgAdminProfilePage {
       Logger.error(
         this.testName,
         `Required field messages not visible: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async logValidationErrors(): Promise<void> {
+    try {
+      Logger.info(this.testName, '── Capturing validation messages ──');
+
+      // ── Text field validations ──
+      const textValidations = [
+        { name: 'Usual First Name', locator: this.usualFirstNameInput },
+        { name: 'First Names',      locator: this.firstNamesInput },
+        { name: 'Last Names',       locator: this.lastNamesInput },
+        { name: 'Language',         locator: this.languageInput },
+        { name: 'Address',          locator: this.addressInput },
+        { name: 'Email',            locator: this.emailInput },
+      ];
+
+      for (const field of textValidations) {
+        try {
+          const parent = field.locator.locator(
+            'xpath=ancestor::div[contains(@class,"MuiFormControl-root")]',
+          );
+          const errorLocator = parent.locator('[id*="helper-text"]');
+          const isVisible    = await errorLocator.isVisible().catch(() => false);
+
+          if (isVisible) {
+            const text = (await errorLocator.textContent())?.trim();
+            Logger.info(this.testName, `Validation → ${field.name}:-> ${text}`);
+          } else {
+            Logger.error(
+              this.testName,
+              `Validation missing → ${field.name}:-> No validation error visible`,
+            );
+          }
+        } catch {
+          Logger.error(this.testName, `Validation check error for ${field.name}`);
+        }
+      }
+
+      // ── Phone validation — span.filter(Required.) se aata hai ──
+      // Row script confirmed: page.locator('span').filter({ hasText: 'Required.' })
+      try {
+        const phoneSpan = this.page
+          .locator('span')
+          .filter({ hasText: 'Required.' })
+          .first();
+
+        const isVisible = await phoneSpan.isVisible().catch(() => false);
+
+        if (isVisible) {
+          const text = (await phoneSpan.textContent())?.trim();
+          Logger.info(this.testName, `Validation → Phone:-> ${text}`);
+        } else {
+          Logger.error(
+            this.testName,
+            'Validation missing → Phone:-> No validation error visible',
+          );
+        }
+      } catch (error) {
+        Logger.error(this.testName, `Phone validation check error: ${error}`);
+      }
+
+      // ── Emergency Contact — optional ──
+      Logger.info(
+        this.testName,
+        'Emergency Contact — optional field, no validation required',
+      );
+
+      Logger.info(this.testName, '── All validation messages captured ──');
+    } catch (error: unknown) {
+      Logger.error(
+        this.testName,
+        `Error while capturing validation messages: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
       throw error;
     }
@@ -1025,74 +1188,11 @@ export class OrgAdminProfilePage {
     }
   }
 
-  // ─────────────────────────────────────────────────────────────
-  // PROFILE DETAILS — ACTIONS
-  // ─────────────────────────────────────────────────────────────
+  async getContactNumberValue(): Promise<string> {
+    return await this.phoneInput.inputValue();
+  }
 
-  /* async waitForProfilePanelVisible(): Promise<void> {
-    try {
-      await this.profileDetailsPanel.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Profile details panel is visible');
-    } catch (error: unknown) {
-      Logger.error(
-        this.testName,
-        `Profile details panel not visible: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      throw error;
-    }
-  } */
-
-  /* async waitForAdminDetailsHeadingVisible(): Promise<void> {
-    try {
-      await this.adminDetailsHeading.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Admin Details heading is visible');
-    } catch (error: unknown) {
-      Logger.error(
-        this.testName,
-        `Admin Details heading not visible: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      throw error;
-    }
-  } */
-
-  /* async waitForProfileAdminNameVisible(): Promise<void> {
-    try {
-      await this.profileAdminName.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Profile admin name is visible');
-    } catch (error: unknown) {
-      Logger.error(
-        this.testName,
-        `Profile admin name not visible: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      throw error;
-    }
-  } */
-
-  /* async waitForProfileAdminEmailVisible(): Promise<void> {
-    try {
-      await this.profileAdminEmail.waitFor({ state: 'visible' });
-      Logger.info(this.testName, 'Profile admin email is visible');
-    } catch (error: unknown) {
-      Logger.error(
-        this.testName,
-        `Profile admin email not visible: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      throw error;
-    }
-  } */
-
-  /* async logProfileData(): Promise<void> {
-    try {
-      const panelText = await this.profileDetailsPanel.textContent();
-      const headingText = await this.adminDetailsHeading.textContent();
-      Logger.info(this.testName, `Profile Panel Data  : "${panelText?.trim()}"`);
-      Logger.info(this.testName, `Admin Details Heading: "${headingText?.trim()}"`);
-    } catch (error: unknown) {
-      Logger.error(
-        this.testName,
-        `Failed to log profile data: ${error instanceof Error ? error.message : String(error)}`,
-      );
-      throw error;
-    }
-  } */
+  async getEmergencyContactValue(): Promise<string> {
+    return await this.emergencyContactInput.inputValue();
+  }
 }
