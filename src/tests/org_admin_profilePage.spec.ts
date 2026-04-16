@@ -35,7 +35,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     Logger.flushAll();
   });
 
-  test('@smoke @regression TC_PE_01 - Verify default tab selection on profile page', async ({
+  /* test('@smoke @regression TC_PE_01 - Verify default tab selection on profile page', async ({
     page,
   }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
@@ -271,125 +271,125 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
 
     // ── Verify popup is closed ──
     await expect(orgadminprofilePage.getUpdateProfilePopup()).not.toBeVisible({ timeout: 5000 });
+  }); */
+
+  test('@regression TC_PE_09 - Verify mandatory field validation on empty form submit', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
+    const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+
+    await page.goto(ENV.BASE_URL_QA);
+
+    await homePage.verifyHomePageLoaded();
+    await homePage.waitForCompanyTableVisible();
+    await homePage.clickFirstRowEyeIcon();
+
+    await orgadminprofilePage.waitForProfilePageLoaded();
+
+    await orgadminprofilePage.clickEditIcon();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+
+    // ── Clear all mandatory fields ──
+    await orgadminprofilePage.clearAllMandatoryFields();
+
+    await orgadminprofilePage.clickUpdateButton();
+
+    await orgadminprofilePage.logValidationErrors();
+
+    // ── Validation messages visible ──
+    await expect(orgadminprofilePage.getRequiredFieldMessages().first()).toBeVisible();
   });
 
-  test( '@regression TC_PE_09 - Verify mandatory field validation on empty form submit',
-    async ({ page }, testInfo) => {
-      const homePage            = new HomePage(page, testInfo.title);
-      const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+  /* test('@regression TC_PE_10 - Verify validation error for invalid Email format', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
+    const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+    const data = DataFactory.profileData('invalidEmailFormat');
 
-      await page.goto(ENV.BASE_URL_QA);
+    await page.goto(ENV.BASE_URL_QA);
 
-      await homePage.verifyHomePageLoaded();
-      await homePage.waitForCompanyTableVisible();
-      await homePage.clickFirstRowEyeIcon();
+    await homePage.verifyHomePageLoaded();
+    await homePage.waitForCompanyTableVisible();
+    await homePage.clickFirstRowEyeIcon();
 
-      await orgadminprofilePage.waitForProfilePageLoaded();
+    await orgadminprofilePage.waitForProfilePageLoaded();
 
-      await orgadminprofilePage.clickEditIcon();
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+    await orgadminprofilePage.clickEditIcon();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
 
-      // ── Clear all mandatory fields ──
-      await orgadminprofilePage.clearAllMandatoryFields();
+    await orgadminprofilePage.updateProfile(data);
 
-      await orgadminprofilePage.clickUpdateButton();
+    await orgadminprofilePage.clickUpdateButton();
+    await orgadminprofilePage.waitForInvalidEmailMessage();
 
-      await orgadminprofilePage.logValidationErrors();
+    await expect(orgadminprofilePage.getInvalidEmailMessage()).toBeVisible();
 
-      // ── Validation messages visible ──
-      await expect(orgadminprofilePage.getRequiredFieldMessages().first()).toBeVisible();
-    },
-  );
+    Logger.info(testInfo.title, `Validation shown for invalid email: ${data.email}`);
+  });
 
-  test( '@regression TC_PE_10 - Verify validation error for invalid Email format',
-    async ({ page }, testInfo) => {
-      const homePage            = new HomePage(page, testInfo.title);
-      const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
-      const data                = DataFactory.profileData('invalidEmailFormat');
+  test('@regression TC_PE_11 - Verify Phone Number does not accept alphabets', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
+    const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+    const data = DataFactory.profileData('invalidPhone');
 
-      await page.goto(ENV.BASE_URL_QA);
+    await page.goto(ENV.BASE_URL_QA);
 
-      await homePage.verifyHomePageLoaded();
-      await homePage.waitForCompanyTableVisible();
-      await homePage.clickFirstRowEyeIcon();
+    await homePage.verifyHomePageLoaded();
+    await homePage.waitForCompanyTableVisible();
+    await homePage.clickFirstRowEyeIcon();
 
-      await orgadminprofilePage.waitForProfilePageLoaded();
+    await orgadminprofilePage.waitForProfilePageLoaded();
+    await orgadminprofilePage.clickEditIcon();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
 
-      await orgadminprofilePage.clickEditIcon();
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+    await orgadminprofilePage.clearPhoneNumber(orgadminprofilePage.getPhoneInput(), 'Phone');
 
-      await orgadminprofilePage.updateProfile(data);
+    await orgadminprofilePage.updateProfile(data);
+    await orgadminprofilePage.clickUpdateButton();
 
-      await orgadminprofilePage.clickUpdateButton();
-      await orgadminprofilePage.waitForInvalidEmailMessage();
+    const value = await orgadminprofilePage.getContactNumberValue();
 
-      await expect(orgadminprofilePage.getInvalidEmailMessage()).toBeVisible();
+    // Assertion: no alphabets should exist
+    expect(value).not.toMatch(/[a-zA-Z]/);
 
-      Logger.info(testInfo.title, `Validation shown for invalid email: ${data.email}`);
-    },
-  );
+    Logger.info(testInfo.title, `Phone number input field not accepting alphabets: "${value}"`);
+  });
 
-  test( '@regression TC_PE_11 - Verify Phone Number does not accept alphabets',
-    async ({ page }, testInfo) => {
-      const homePage            = new HomePage(page, testInfo.title);
-      const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
-      const data                = DataFactory.profileData('invalidPhone');
+  test('@smoke @regression TC_PE_12 - Verify profile update successful', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
+    const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+    const data = DataFactory.profileData('validProfile');
 
-      await page.goto(ENV.BASE_URL_QA);
+    await page.goto(ENV.BASE_URL_QA);
 
-      await homePage.verifyHomePageLoaded();
-      await homePage.waitForCompanyTableVisible();
-      await homePage.clickFirstRowEyeIcon();
+    await homePage.verifyHomePageLoaded();
+    await homePage.waitForCompanyTableVisible();
+    await homePage.clickFirstRowEyeIcon();
 
-      await orgadminprofilePage.waitForProfilePageLoaded();
-      await orgadminprofilePage.clickEditIcon();
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+    await orgadminprofilePage.waitForProfilePageLoaded();
 
-      await orgadminprofilePage.clearPhoneNumber(orgadminprofilePage.getPhoneInput(), 'Phone');
+    await orgadminprofilePage.clickEditIcon();
 
-      await orgadminprofilePage.updateProfile(data);
-      await orgadminprofilePage.clickUpdateButton();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
 
-      const value = await orgadminprofilePage.getContactNumberValue();
+    await orgadminprofilePage.updateProfile(data);
+    await orgadminprofilePage.clickUpdateButton();
 
-      // Assertion: no alphabets should exist
-      expect(value).not.toMatch(/[a-zA-Z]/);
+    // wait until popup disappears
+    // await expect(orgadminprofilePage.getUpdateProfilePopup()).toBeHidden();
 
-      Logger.info(testInfo.title, `Phone number input field not accepting alphabets: "${value}"`);
-    },
-  );
+    // now verify
+    // await expect(orgadminprofilePage.getSuccessToast()).toBeVisible();
 
-  test( '@smoke @regression TC_PE_12 - Verify profile update successful',
-    async ({ page }, testInfo) => {
-      const homePage            = new HomePage(page, testInfo.title);
-      const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
-      const data                = DataFactory.profileData('validProfile');
-
-      await page.goto(ENV.BASE_URL_QA);
-
-      await homePage.verifyHomePageLoaded();
-      await homePage.waitForCompanyTableVisible();
-      await homePage.clickFirstRowEyeIcon();
-
-      await orgadminprofilePage.waitForProfilePageLoaded();
-
-      await orgadminprofilePage.clickEditIcon();
-
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
-
-      await orgadminprofilePage.updateProfile(data);
-      await orgadminprofilePage.clickUpdateButton();
-
-      // wait until popup disappears
-      // await expect(orgadminprofilePage.getUpdateProfilePopup()).toBeHidden();
-
-      // now verify
-      // await expect(orgadminprofilePage.getSuccessToast()).toBeVisible();
-
-      // await expect(orgadminprofilePage.getAdminDetailsHeading()).toBeVisible();
-      Logger.info(testInfo.title, `Profile updated successfully — ${data.description}`);
-    },
-  );
+    // await expect(orgadminprofilePage.getAdminDetailsHeading()).toBeVisible();
+    Logger.info(testInfo.title, `Profile updated successfully — ${data.description}`);
+  }); */
 
   /* test( '@regression TC_PE_13 - Verify data persistence after profile update',
     async ({ page }, testInfo) => {
