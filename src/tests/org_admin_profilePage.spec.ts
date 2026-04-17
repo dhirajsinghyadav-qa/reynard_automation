@@ -382,16 +382,16 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     await orgadminprofilePage.clickUpdateButton();
 
     // wait until popup disappears
-    // await expect(orgadminprofilePage.getUpdateProfilePopup()).toBeHidden();
+    await expect(orgadminprofilePage.getUpdateProfilePopup()).toBeHidden();
 
     // now verify
     // await expect(orgadminprofilePage.getSuccessToast()).toBeVisible();
 
-    // await expect(orgadminprofilePage.getAdminDetailsHeading()).toBeVisible();
+    await expect(orgadminprofilePage.getAdminDetailsHeading()).toBeVisible();
     Logger.info(testInfo.title, `Profile updated successfully — ${data.description}`);
   });
 
-  /* test( '@regression TC_PE_13 - Verify data persistence after profile update',
+  test( '@regression TC_PE_13 - Verify data persistence after profile update',
     async ({ page }, testInfo) => {
       const homePage            = new HomePage(page, testInfo.title);
       const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
@@ -422,5 +422,5 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
       expect(persisted.lastNames).toBe(data.lastNames);
       Logger.info(testInfo.title, 'Data persistence verified after update');
     },
-  ); */
+  );
 });
