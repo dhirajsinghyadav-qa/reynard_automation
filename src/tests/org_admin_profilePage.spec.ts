@@ -391,36 +391,36 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     Logger.info(testInfo.title, `Profile updated successfully — ${data.description}`);
   });
 
-  test( '@regression TC_PE_13 - Verify data persistence after profile update',
-    async ({ page }, testInfo) => {
-      const homePage            = new HomePage(page, testInfo.title);
-      const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
-      const data                = DataFactory.profileData('validProfile');
+  test('@regression TC_PE_13 - Verify data persistence after profile update', async ({
+    page,
+  }, testInfo) => {
+    const homePage = new HomePage(page, testInfo.title);
+    const orgadminprofilePage = new OrgAdminProfilePage(page, testInfo.title);
+    const data = DataFactory.profileData('validProfile');
 
-      await page.goto(ENV.BASE_URL_QA);
+    await page.goto(ENV.BASE_URL_QA);
 
-      await homePage.verifyHomePageLoaded();
-      await homePage.waitForCompanyTableVisible();
-      await homePage.clickFirstRowEyeIcon();
+    await homePage.verifyHomePageLoaded();
+    await homePage.waitForCompanyTableVisible();
+    await homePage.clickFirstRowEyeIcon();
 
-      await orgadminprofilePage.waitForProfilePageLoaded();
-      await orgadminprofilePage.clickEditIcon();
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+    await orgadminprofilePage.waitForProfilePageLoaded();
+    await orgadminprofilePage.clickEditIcon();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
 
-      await orgadminprofilePage.updateProfile(data);
-      await orgadminprofilePage.clickUpdateButton();
+    await orgadminprofilePage.updateProfile(data);
+    await orgadminprofilePage.clickUpdateButton();
 
-      // ── Reopen and verify persistence ──
-      await orgadminprofilePage.waitForProfilePageLoaded();
-      await orgadminprofilePage.clickEditIcon();
-      await orgadminprofilePage.waitForUpdateProfilePopupVisible();
+    // ── Reopen and verify persistence ──
+    await orgadminprofilePage.waitForProfilePageLoaded();
+    await orgadminprofilePage.clickEditIcon();
+    await orgadminprofilePage.waitForUpdateProfilePopupVisible();
 
-      const persisted = await orgadminprofilePage.capturePreFilledValues();
+    const persisted = await orgadminprofilePage.capturePreFilledValues();
 
-      expect(persisted.usualFirstName).toBe(data.usualFirstName);
-      expect(persisted.firstNames).toBe(data.firstNames);
-      expect(persisted.lastNames).toBe(data.lastNames);
-      Logger.info(testInfo.title, 'Data persistence verified after update');
-    },
-  );
+    expect(persisted.usualFirstName).toBe(data.usualFirstName);
+    expect(persisted.firstNames).toBe(data.firstNames);
+    expect(persisted.lastNames).toBe(data.lastNames);
+    Logger.info(testInfo.title, 'Data persistence verified after update');
+  });
 });
