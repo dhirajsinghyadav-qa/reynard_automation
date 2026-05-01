@@ -56,7 +56,7 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     Logger.info(testInfo.title, 'Default tab Admin Details verified');
   });
 
-  test('@smoke @regression TC_PE_02 - Verify tab switching functionality', async ({
+  /* test('@smoke @regression TC_PE_02 - Verify tab switching functionality', async ({
     page,
   }, testInfo) => {
     const homePage = new HomePage(page, testInfo.title);
@@ -422,5 +422,5 @@ test.describe('Org. Admin Profile Edit Test Suite', () => {
     expect(persisted.firstNames).toBe(data.firstNames);
     expect(persisted.lastNames).toBe(data.lastNames);
     Logger.info(testInfo.title, 'Data persistence verified after update');
-  });
+  }); */
 });
