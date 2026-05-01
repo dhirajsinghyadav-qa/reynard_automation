@@ -1,6 +1,6 @@
 import { OrgAdminProfilePage } from '../pages/Org_Admin_ProfilePage';
 import { HomePage } from '../pages/S_Admin_HomePage';
-import { DataFactory } from '@/utils/dataGenerator';
+// import { DataFactory } from '@/utils/dataGenerator';
 import { test, expect } from '@fixtures/baseTest';
 import { Logger } from '../utils/logger';
 import { ENV } from '../config/env';
